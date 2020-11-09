@@ -8,13 +8,13 @@
 class Window
 {
     public:
-        GLFWwindow* window;
-        Window(int width, int height, std::string title);
-        bool isRunning();
-        void CloseWindow();
-        static void ErrorCallback(int error, const char* description);
-        static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-        void Update();
+        GLFWwindow* window; //GLFWwindow object, (used to step up window)
+        Window(int width, int height, std::string title); //Constructor
+        bool isRunning(); //Checks if window is running
+        void CloseAllGLFW(); //Closes all glfw process
+        static void ErrorCallback(int error, const char* description); //Error handeller
+        void Update(); //Updates screen
+        static void Resize(GLFWwindow* window, int width, int height); //Resizes window
         virtual ~Window();
 
     protected:
