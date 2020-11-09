@@ -3,3 +3,11 @@
 ################################################################################
 
 /Procdemic.sln
+/x64
+/Procdemic.vcxproj.user
+/Procdemic.vcxproj.filters
+/Procdemic.vcxproj
+/lib/lib-vc2019
+/include/GLFW
+/Debug
+/.vs
