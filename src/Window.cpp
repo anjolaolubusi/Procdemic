@@ -43,6 +43,14 @@ Window::Window(int width, int height, std::string title)
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
     glfwSetFramebufferSizeCallback(window, Resize);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(this->window, true);
+    ImGui_ImplOpenGL3_Init("#version 130");
+
 }
 
 //Checks if window is running

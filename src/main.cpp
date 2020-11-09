@@ -11,11 +11,28 @@ int main()
 {
 Window screen(800, 600, "Test");
 glfwSetKeyCallback(screen.window, Input);
+
+
 while(screen.isRunning()){
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();  
+
+    ImGui::Begin("Test");
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     screen.Update();
+
 }
+
+ImGui_ImplOpenGL3_Shutdown();
+ImGui_ImplGlfw_Shutdown();
+ImGui::DestroyContext();
+
 screen.CloseAllGLFW();
 
 }
