@@ -12,26 +12,18 @@ int main()
 Window screen(800, 600, "Test");
 glfwSetKeyCallback(screen.window, Input);
 
-
+double beginTime = 0;
+double lastTime = 0;
+double FPS = 0;
 while(screen.isRunning()){
+    FPS = 1 / (lastTime - beginTime);
+    beginTime = glfwGetTime();
     glClear(GL_COLOR_BUFFER_BIT);
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();  
 
-    ImGui::Begin("Test");
-    ImGui::End();
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     screen.Update();
-
+    lastTime = glfwGetTime();
 }
-
-ImGui_ImplOpenGL3_Shutdown();
-ImGui_ImplGlfw_Shutdown();
-ImGui::DestroyContext();
 
 screen.CloseAllGLFW();
 
