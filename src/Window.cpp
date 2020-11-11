@@ -1,5 +1,4 @@
 #include "Window.h"
-#include <iostream>
 
 
 //Parameterized constructor
@@ -7,7 +6,7 @@ Window::Window(int width, int height, const char* title)
 {
     //Initalizes glfw
     if(!glfwInit()){
-        std::cout << "Failed to initalize GLFW" << std::endl;
+        printf("Failed to initalize GLFW");
     }
     
     //Defines how errors are handled
@@ -20,7 +19,7 @@ Window::Window(int width, int height, const char* title)
     //Check if window is probably defined
     if(!this->window)
     {
-        std::cout << "Failed to initalize window" << std::endl;
+        printf("Failed to initalize window");
         glfwTerminate();
     }
     
@@ -37,7 +36,7 @@ Window::Window(int width, int height, const char* title)
     //Imports glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        printf("Failed to initialize GLAD");
         glfwTerminate();
     }
     
@@ -55,13 +54,13 @@ bool Window::isRunning(){
 //Closes all glfw process
 void Window::CloseAllGLFW(){
     glfwTerminate();
-    std::cout << "GLFW terminated" << std::endl;
+    printf("GLFW terminated");
 
 }
 
 //Error handeller
 void Window::ErrorCallback(int error, const char* description){
-    fprintf(stderr, "Error: %s\n", description);
+    printf("Error: %s\n", description);
 }
 
 
