@@ -13,5 +13,8 @@ class Logger
 		void Log(const char* log, bool error = false);
 		virtual ~Logger();
 		FILE* fptr;
+		time_t now;
+		tm* curr_date;
+		std::string str_currdate;
 };
 #endif //LOGGER_H
