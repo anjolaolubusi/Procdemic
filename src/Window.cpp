@@ -1,25 +1,25 @@
 #include "Window.h"
-#include <iostream>
 
 
 //Parameterized constructor
-Window::Window(int width, int height, std::string title)
-{
+Window::Window(int width, int height, const char* title, Logger* logger){
+    this->logger = logger;
     //Initalizes glfw
     if(!glfwInit()){
-        std::cout << "Failed to initalize GLFW" << std::endl;
+        this->logger->Log("Failed to initalize GLFW", true);
     }
     
     //Defines how errors are handled
     glfwSetErrorCallback(ErrorCallback);
     
     //Sets up Window class
-    window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-    
+    window = glfwCreateWindow(width, height, title, NULL, NULL);
+    this->title = title;
+
     //Check if window is probably defined
     if(!this->window)
     {
-        std::cout << "Failed to initalize window" << std::endl;
+        this->logger->Log("Failed to initalize window", true);
         glfwTerminate();
     }
     
@@ -36,13 +36,14 @@ Window::Window(int width, int height, std::string title)
     //Imports glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        this->logger->Log("Failed to initialize GLAD", true);
         glfwTerminate();
     }
     
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
     glfwSetFramebufferSizeCallback(window, Resize);
+
 }
 
 //Checks if window is running
@@ -53,13 +54,13 @@ bool Window::isRunning(){
 //Closes all glfw process
 void Window::CloseAllGLFW(){
     glfwTerminate();
-    std::cout << "GLFW terminated" << std::endl;
+    this->logger->Log("GLFW terminated");
 
 }
 
 //Error handeller
 void Window::ErrorCallback(int error, const char* description){
-    fprintf(stderr, "Error: %s\n", description);
+    printf("Error: %s\n", description);
 }
 
 
@@ -72,6 +73,13 @@ void Window::Update(){
 
 void Window::Resize(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+}
+
+void Window::UpdateSysStats(double frametime, double fps)
+{
+    std::string new_title = this->title;
+    new_title += " Frametime: " + std::to_string(frametime) + " FPS: " + std::to_string(fps);
+    glfwSetWindowTitle(this->window, new_title.c_str());
 }
 
 Window::~Window()
