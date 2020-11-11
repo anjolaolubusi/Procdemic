@@ -2,11 +2,11 @@
 
 
 //Parameterized constructor
-Window::Window(int width, int height, const char* title)
-{
+Window::Window(int width, int height, const char* title, Logger* logger){
+    this->logger = logger;
     //Initalizes glfw
     if(!glfwInit()){
-        printf("Failed to initalize GLFW");
+        this->logger->Log("Failed to initalize GLFW", true);
     }
     
     //Defines how errors are handled
@@ -19,7 +19,7 @@ Window::Window(int width, int height, const char* title)
     //Check if window is probably defined
     if(!this->window)
     {
-        printf("Failed to initalize window");
+        this->logger->Log("Failed to initalize window", true);
         glfwTerminate();
     }
     
@@ -36,7 +36,7 @@ Window::Window(int width, int height, const char* title)
     //Imports glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        printf("Failed to initialize GLAD");
+        this->logger->Log("Failed to initialize GLAD", true);
         glfwTerminate();
     }
     
@@ -54,7 +54,7 @@ bool Window::isRunning(){
 //Closes all glfw process
 void Window::CloseAllGLFW(){
     glfwTerminate();
-    printf("GLFW terminated");
+    this->logger->Log("GLFW terminated");
 
 }
 
@@ -75,7 +75,7 @@ void Window::Resize(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void Window::UpdateSysStats(double frametime, double fps, double ram, double cpu)
+void Window::UpdateSysStats(double frametime, double fps)
 {
     std::string new_title = this->title;
     new_title += " Frametime: " + std::to_string(frametime) + " FPS: " + std::to_string(fps);

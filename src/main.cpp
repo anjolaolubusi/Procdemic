@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Logger.h"
 #include "Window.h"
 #ifdef _WIN32
 #include <Windows.h>
@@ -16,16 +17,16 @@ void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
 
 int main()
 {
-Window screen(800, 600, "Test");
+Logger logger("logs.txt");
+Window screen(800, 600, "Test", &logger);
 glfwSetKeyCallback(screen.window, Input);
 double lastTime = glfwGetTime();
-double nowTime = 0;
-double deltaTime = 0;
-while(screen.isRunning()){
+double nowTime, deltaTime = 0;
+while(screen.isRunning()){  
     nowTime = glfwGetTime();
     deltaTime = nowTime - lastTime;
     if (1/deltaTime < FPS) {
-        screen.UpdateSysStats(deltaTime, 1 / deltaTime, 0, 0);
+        screen.UpdateSysStats(deltaTime, 1 / deltaTime);
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         screen.Update();
