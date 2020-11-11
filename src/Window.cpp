@@ -3,7 +3,7 @@
 
 
 //Parameterized constructor
-Window::Window(int width, int height, std::string title)
+Window::Window(int width, int height, const char* title)
 {
     //Initalizes glfw
     if(!glfwInit()){
@@ -14,8 +14,9 @@ Window::Window(int width, int height, std::string title)
     glfwSetErrorCallback(ErrorCallback);
     
     //Sets up Window class
-    window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-    
+    window = glfwCreateWindow(width, height, title, NULL, NULL);
+    this->title = title;
+
     //Check if window is probably defined
     if(!this->window)
     {
@@ -73,6 +74,13 @@ void Window::Update(){
 
 void Window::Resize(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+}
+
+void Window::UpdateSysStats(double frametime, double fps, double ram, double cpu)
+{
+    std::string new_title = this->title;
+    new_title += " Frametime: " + std::to_string(frametime) + " FPS: " + std::to_string(fps);
+    glfwSetWindowTitle(this->window, new_title.c_str());
 }
 
 Window::~Window()
