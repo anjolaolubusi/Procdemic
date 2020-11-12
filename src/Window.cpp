@@ -9,9 +9,6 @@ Window::Window(int width, int height, const char* title, Logger* logger){
         this->logger->Log("Failed to initalize GLFW", true);
     }
     
-    //Defines how errors are handled
-    glfwSetErrorCallback(ErrorCallback);
-    
     //Sets up Window class
     window = glfwCreateWindow(width, height, title, NULL, NULL);
     this->title = title;
@@ -57,12 +54,6 @@ void Window::CloseAllGLFW(){
     this->logger->Log("GLFW terminated");
 
 }
-
-//Error handeller
-void Window::ErrorCallback(int error, const char* description){
-    printf("Error: %s\n", description);
-}
-
 
 //Updates screen
 void Window::Update(){

@@ -8,6 +8,7 @@
 #endif
 
 #define FPS 60
+Logger logger("logs.txt");
 
 void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -15,13 +16,20 @@ void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     }
 }
 
+//Error handeller
+void ErrorCallback(int error, const char* description) {
+    logger.Log(description);
+}
+
+
 int main()
 {
-Logger logger("logs.txt");
 Window screen(800, 600, "Test", &logger);
 glfwSetKeyCallback(screen.window, Input);
+glfwSetErrorCallback(ErrorCallback);
 double lastTime = glfwGetTime();
 double nowTime, deltaTime = 0;
+
 while(screen.isRunning()){  
     nowTime = glfwGetTime();
     deltaTime = nowTime - lastTime;
