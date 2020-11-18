@@ -6,8 +6,10 @@
 #else
 #include <unistd.h>
 #endif
+#include "Shader.h"
 
 #define FPS 60
+Logger logger("logs.txt");
 
 void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -15,32 +17,47 @@ void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     }
 }
 
-int main()
-{
-Logger logger("logs.txt");
-Window screen(800, 600, "Test", &logger);
-glfwSetKeyCallback(screen.window, Input);
-double lastTime = glfwGetTime();
-double nowTime, deltaTime = 0;
-while(screen.isRunning()){  
-    nowTime = glfwGetTime();
-    deltaTime = nowTime - lastTime;
-    if (1/deltaTime < FPS) {
-        screen.UpdateSysStats(deltaTime, 1 / deltaTime);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        screen.Update();
-        lastTime = glfwGetTime();
-    }else{
-#ifdef _WIN32
-        Sleep(deltaTime - 1 / FPS);
-#else
-        usleep(deltaTime - 1 / FPS);
-#endif
-    }
+//Error handeller
+void ErrorCallback(int error, const char* description) {
+    logger.Log(description);
 }
 
-screen.CloseAllGLFW();
 
+int main()
+{
+    try {
+        Window screen(800, 600, "Test", &logger);
+        glfwSetKeyCallback(screen.window, Input);
+        glfwSetErrorCallback(ErrorCallback);
+        double lastTime = glfwGetTime();
+        double nowTime, deltaTime = 0;
+        Shader ss("Test", &logger);
+
+        while (screen.isRunning()) {
+            nowTime = glfwGetTime();
+            deltaTime = nowTime - lastTime;
+            if (1 / deltaTime < FPS) {
+                screen.UpdateSysStats(deltaTime, 1 / deltaTime);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+                screen.Update();
+                lastTime = glfwGetTime();
+            }
+            else {
+#ifdef _WIN32
+                Sleep(deltaTime - 1 / FPS);
+#else
+                usleep(deltaTime - 1 / FPS);
+#endif
+            }
+        }
+
+        screen.CloseAllGLFW();
+    }
+    catch (const char* msg) {
+        logger.Log(msg, true);
+    }
+
+    return 0;
 }
 

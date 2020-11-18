@@ -6,12 +6,9 @@ Window::Window(int width, int height, const char* title, Logger* logger){
     this->logger = logger;
     //Initalizes glfw
     if(!glfwInit()){
-        this->logger->Log("Failed to initalize GLFW", true);
+        throw "Failed to initalize GLFW";
     }
-    
-    //Defines how errors are handled
-    glfwSetErrorCallback(ErrorCallback);
-    
+
     //Sets up Window class
     window = glfwCreateWindow(width, height, title, NULL, NULL);
     this->title = title;
@@ -19,8 +16,8 @@ Window::Window(int width, int height, const char* title, Logger* logger){
     //Check if window is probably defined
     if(!this->window)
     {
-        this->logger->Log("Failed to initalize window", true);
         glfwTerminate();
+        throw "Failed to initalize window";
     }
     
     //Defines OpenGL context
@@ -36,8 +33,8 @@ Window::Window(int width, int height, const char* title, Logger* logger){
     //Imports glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        this->logger->Log("Failed to initialize GLAD", true);
         glfwTerminate();
+        throw "Failed to initialize GLAD";
     }
     
     glfwGetFramebufferSize(window, &width, &height);
@@ -54,15 +51,9 @@ bool Window::isRunning(){
 //Closes all glfw process
 void Window::CloseAllGLFW(){
     glfwTerminate();
-    this->logger->Log("GLFW terminated");
+    this->logger->Log("GLFW terminated\n");
 
 }
-
-//Error handeller
-void Window::ErrorCallback(int error, const char* description){
-    printf("Error: %s\n", description);
-}
-
 
 //Updates screen
 void Window::Update(){
