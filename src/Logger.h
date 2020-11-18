@@ -4,14 +4,18 @@
 #include <stdio.h>
 #include <time.h>
 #include <string>
-
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <unistd.h>
+#endif
 
 class Logger
 {
 	public:
-		Logger(const char* filename);
+		Logger();
 		void Log(const char* log, bool error = false);
-		virtual ~Logger();
+		~Logger();
 		FILE* fptr;
 		time_t now;
 		tm* curr_date;

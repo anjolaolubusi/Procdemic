@@ -9,7 +9,7 @@
 #include "Shader.h"
 
 #define FPS 60
-Logger logger("logs.txt");
+Logger logger;
 
 void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -19,7 +19,7 @@ void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
 
 //Error handeller
 void ErrorCallback(int error, const char* description) {
-    logger.Log(description);
+    throw description;
 }
 
 
@@ -53,11 +53,9 @@ int main()
         }
 
         screen.CloseAllGLFW();
-    }
-    catch (const char* msg) {
+    }catch(const char* msg){
         logger.Log(msg, true);
     }
 
     return 0;
 }
-
