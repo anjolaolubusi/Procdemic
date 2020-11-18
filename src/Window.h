@@ -6,7 +6,6 @@
 #include <string>
 #include "Logger.h"
 
-
 class Window
 {
     public:
@@ -18,7 +17,7 @@ class Window
         void Update(); //Updates screen
         static void Resize(GLFWwindow* window, int width, int height); //Resizes window
         void UpdateSysStats(double frametime, double fps);
-        virtual ~Window();
+        ~Window();
 
         const char* title;
         Logger* logger;

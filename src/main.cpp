@@ -6,6 +6,7 @@
 #else
 #include <unistd.h>
 #endif
+#include "Shader.h"
 
 #define FPS 60
 Logger logger("logs.txt");
@@ -24,31 +25,39 @@ void ErrorCallback(int error, const char* description) {
 
 int main()
 {
-Window screen(800, 600, "Test", &logger);
-glfwSetKeyCallback(screen.window, Input);
-glfwSetErrorCallback(ErrorCallback);
-double lastTime = glfwGetTime();
-double nowTime, deltaTime = 0;
+    try {
+        Window screen(800, 600, "Test", &logger);
+        glfwSetKeyCallback(screen.window, Input);
+        glfwSetErrorCallback(ErrorCallback);
+        double lastTime = glfwGetTime();
+        double nowTime, deltaTime = 0;
+        Shader ss("Test", &logger);
 
-while(screen.isRunning()){  
-    nowTime = glfwGetTime();
-    deltaTime = nowTime - lastTime;
-    if (1/deltaTime < FPS) {
-        screen.UpdateSysStats(deltaTime, 1 / deltaTime);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        screen.Update();
-        lastTime = glfwGetTime();
-    }else{
+        while (screen.isRunning()) {
+            nowTime = glfwGetTime();
+            deltaTime = nowTime - lastTime;
+            if (1 / deltaTime < FPS) {
+                screen.UpdateSysStats(deltaTime, 1 / deltaTime);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+                screen.Update();
+                lastTime = glfwGetTime();
+            }
+            else {
 #ifdef _WIN32
-        Sleep(deltaTime - 1 / FPS);
+                Sleep(deltaTime - 1 / FPS);
 #else
-        usleep(deltaTime - 1 / FPS);
+                usleep(deltaTime - 1 / FPS);
 #endif
+            }
+        }
+
+        screen.CloseAllGLFW();
     }
-}
+    catch (const char* msg) {
+        logger.Log(msg, true);
+    }
 
-screen.CloseAllGLFW();
-
+    return 0;
 }
 
