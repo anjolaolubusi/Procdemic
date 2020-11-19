@@ -31,7 +31,7 @@ int main()
         glfwSetErrorCallback(ErrorCallback);
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
-        Shader ss("Test", &logger);
+        Shader ss("basic", &logger);
 
         while (screen.isRunning()) {
             nowTime = glfwGetTime();
