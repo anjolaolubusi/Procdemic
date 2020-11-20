@@ -5,6 +5,7 @@
 
 class Mesh
 {
+public:
 	Mesh(Logger* logger);
     Logger* logger;
     float vertices[9] = {
@@ -12,6 +13,10 @@ class Mesh
      0.5f, -0.5f, 0.0f,
      0.0f,  0.5f, 0.0f
     };
+    unsigned int VAO;
     unsigned int VBO;
+    void Draw(unsigned int shaderProgram);
+    ~Mesh();
+
 };
 #endif

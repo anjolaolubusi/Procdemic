@@ -7,6 +7,7 @@
 #include <unistd.h>
 #endif
 #include "Shader.h"
+#include "Mesh.h"
 
 #define FPS 60
 Logger logger;
@@ -32,6 +33,7 @@ int main()
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
         Shader ss("basic", &logger);
+        Mesh mm(&logger);
 
         while (screen.isRunning()) {
             nowTime = glfwGetTime();
@@ -40,6 +42,7 @@ int main()
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime);
                 glClear(GL_COLOR_BUFFER_BIT);
                 glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+                mm.Draw(ss.shaderProgram);
                 screen.Update();
                 lastTime = glfwGetTime();
             }
