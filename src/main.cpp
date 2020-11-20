@@ -7,9 +7,10 @@
 #include <unistd.h>
 #endif
 #include "Shader.h"
+#include "Mesh.h"
 
 #define FPS 60
-Logger logger("logs.txt");
+Logger logger;
 
 void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -19,7 +20,7 @@ void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
 
 //Error handeller
 void ErrorCallback(int error, const char* description) {
-    logger.Log(description);
+    throw description;
 }
 
 
@@ -31,7 +32,8 @@ int main()
         glfwSetErrorCallback(ErrorCallback);
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
-        Shader ss("Test", &logger);
+        Shader ss("basic", &logger);
+        Mesh mm(&logger);
 
         while (screen.isRunning()) {
             nowTime = glfwGetTime();
@@ -40,6 +42,7 @@ int main()
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime);
                 glClear(GL_COLOR_BUFFER_BIT);
                 glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+                mm.Draw(ss.shaderProgram);
                 screen.Update();
                 lastTime = glfwGetTime();
             }
@@ -53,11 +56,9 @@ int main()
         }
 
         screen.CloseAllGLFW();
-    }
-    catch (const char* msg) {
+    }catch(const char* msg){
         logger.Log(msg, true);
     }
 
     return 0;
 }
-

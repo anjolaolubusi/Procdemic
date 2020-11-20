@@ -51,7 +51,7 @@ bool Window::isRunning(){
 //Closes all glfw process
 void Window::CloseAllGLFW(){
     glfwTerminate();
-    this->logger->Log("GLFW terminated\n");
+    this->logger->Log("GLFW terminated");
 
 }
 
@@ -75,5 +75,5 @@ void Window::UpdateSysStats(double frametime, double fps)
 
 Window::~Window()
 {
-    //dtor
+    logger->Log("Destructing Window class");
 }
