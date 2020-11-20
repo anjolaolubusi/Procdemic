@@ -13,8 +13,10 @@ Logger::Logger() {
 			fptr = fopen(fileDir, "a");
 			this->Log("Created Log Folder");
 		}
-#else 
-		if (mkdir("logs", 0700) == 0) {
+#else
+        struct stat st = {0};
+		if (stat("logs", &st) == -1){
+            mkdir("logs", 0700);
 			fptr = fopen(fileDir, "a");
 			this->Log("Created Log Folder");
 	}
