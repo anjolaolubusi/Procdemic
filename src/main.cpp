@@ -56,7 +56,7 @@ int main()
         }
 
         screen.CloseAllGLFW();
-    }catch(...){
+    }catch(const char* msg){
 
     }
 

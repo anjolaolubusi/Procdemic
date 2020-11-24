@@ -16,10 +16,13 @@ Shader::Shader(std::string shaderName, Logger* logger) {
 	glLinkProgram(this->shaderProgram);
 	int success;
 	char infoLog[512];
-	glGetShaderiv(this->shaderProgram, GL_COMPILE_STATUS, &success);
+	glGetProgramiv(this->shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetShaderInfoLog(this->shaderProgram, 512, NULL, infoLog);
-		error_string = "Shader Program Linking Failed \n" + std::string(infoLog);
+        int tt;
+		glGetProgramInfoLog(this->shaderProgram, sizeof(infoLog), &tt, infoLog);
+		error_string = infoLog;
+		this->logger->Log("Shader Program Linking Failed", true);
+		this->logger->Log(error_string.c_str(), true);
 		throw error_string.c_str();
 	}
 	this->logger->Log("Shader Program has been compiled");
