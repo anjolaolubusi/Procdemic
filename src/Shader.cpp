@@ -3,7 +3,11 @@
 Shader::Shader(std::string shaderName, Logger* logger) {
 	this->logger = logger;
 	this->ShaderName = shaderName;
-	this->fileDir = "shaders\\" + shaderName;
+#ifdef _WIN32
+    this->fileDir = "shaders\\" + shaderName;
+#else
+    this->fileDir = "shaders/" + shaderName;
+#endif
 	this->shaderProgram = glCreateProgram();
 	for (int i = 0; i < NUM_OF_SHADERS; i++) {
 		LoadShaderFile(i);
@@ -12,12 +16,16 @@ Shader::Shader(std::string shaderName, Logger* logger) {
 	glLinkProgram(this->shaderProgram);
 	int success;
 	char infoLog[512];
-	glGetShaderiv(this->shaderProgram, GL_COMPILE_STATUS, &success);
+	glGetProgramiv(this->shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetShaderInfoLog(this->shaderProgram, 512, NULL, infoLog);
-		error_string = "Shader Program Linking Failed \n" + std::string(infoLog);
+        int tt;
+		glGetProgramInfoLog(this->shaderProgram, sizeof(infoLog), &tt, infoLog);
+		error_string = infoLog;
+		this->logger->Log("Shader Program Linking Failed", true);
+		this->logger->Log(error_string.c_str(), true);
 		throw error_string.c_str();
 	}
+	this->logger->Log("Shader Program has been compiled");
 }
 
 void Shader::Use(){
@@ -31,33 +39,40 @@ void Shader::LoadShaderFile(int ShaderType){
 		temp_fileDir.append(".vs");
 		shaderFile.open(temp_fileDir.c_str());
 		this->Shaders[VERTSHADER] = glCreateShader(GL_VERTEX_SHADER);
-	}else{		
+	}else{
 		temp_fileDir.append(".fs");
 		shaderFile.open(temp_fileDir.c_str());
 		this->Shaders[FRAGSHADER] = glCreateShader(GL_FRAGMENT_SHADER);
 	}
 	std::string currLine;
+	std::string UpdateString = "Opening Shader File: " + temp_fileDir;
+	this->logger->Log(UpdateString.c_str());
 	if (shaderFile.is_open()){
 		while (shaderFile.good()){
 			getline(shaderFile, currLine);
 			ShaderFiles[ShaderType].append(currLine + "\n");
 		}
 	} else {
-		error_string = "Unable to load " + this->ShaderName + " Shader";
-		throw error_string.c_str();
+		this->error_string = "Unable to load " + this->ShaderName + " Shader file. DIR: " + temp_fileDir;
+		this->logger->Log(error_string.c_str(), true);
+		throw this->error_string.c_str();
 	}
 	shaderFile.close();
+	this->logger->Log("Shader File has been opened");
 	const GLchar* temp = this->ShaderFiles[ShaderType].c_str();
 	glShaderSource(this->Shaders[ShaderType], 1, &temp, NULL);
+	this->logger->Log("Copying Shader File to OpenGL Shader Object");
 	glCompileShader(this->Shaders[ShaderType]);
 	int success;
 	char infoLog[512];
 	glGetShaderiv(this->Shaders[ShaderType], GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(this->Shaders[ShaderType], 512, NULL, infoLog);
-		error_string = "Shader Vertex Compilation Failed \n" + std::string(infoLog);
-		throw error_string.c_str();
+		this->error_string = "Shader Vertex Compilation Failed \n" + std::string(infoLog);
+		this->logger->Log(this->error_string.c_str());
+		throw this->error_string.c_str();
 	}
+	logger->Log("OpenGL Shader has been compiled");
 }
 
 
@@ -66,4 +81,5 @@ Shader::~Shader() {
 		glDeleteShader(this->Shaders[i]);
 	}
 	glDeleteProgram(this->shaderProgram);
+    this->logger->Log("Shader is deleted from memory");
 }

@@ -13,11 +13,10 @@ Logger::Logger() {
 			fptr = fopen(fileDir, "a");
 			this->Log("Created Log Folder");
 		}
-#else 
-		if (mkdir("logs", 0700) == 0) {
+#else
+            mkdir("logs", 0700);
 			fptr = fopen(fileDir, "a");
 			this->Log("Created Log Folder");
-	}
 #endif
 	}
 	this->Log("Initalizing Logger");

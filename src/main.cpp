@@ -57,7 +57,7 @@ int main()
 
         screen.CloseAllGLFW();
     }catch(const char* msg){
-        logger.Log(msg, true);
+
     }
 
     return 0;

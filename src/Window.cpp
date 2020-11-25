@@ -6,6 +6,7 @@ Window::Window(int width, int height, const char* title, Logger* logger){
     this->logger = logger;
     //Initalizes glfw
     if(!glfwInit()){
+        this->logger->Log("Failed to initalize GLFW");
         throw "Failed to initalize GLFW";
     }
 
@@ -17,9 +18,10 @@ Window::Window(int width, int height, const char* title, Logger* logger){
     if(!this->window)
     {
         glfwTerminate();
+        this->logger->Log("Failed to initalize window");
         throw "Failed to initalize window";
     }
-    
+
     //Defines OpenGL context
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -29,14 +31,15 @@ Window::Window(int width, int height, const char* title, Logger* logger){
 #endif
     //Sets current context to this window
     glfwMakeContextCurrent(this->window);
-    
+
     //Imports glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         glfwTerminate();
+        this->logger->Log("Failed to initialize GLAD");
         throw "Failed to initialize GLAD";
     }
-    
+
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
     glfwSetFramebufferSizeCallback(window, Resize);
