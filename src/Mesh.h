@@ -13,10 +13,10 @@ class Mesh
 public:
 	Mesh(Logger* logger);
     Logger* logger;
-    float vertices[9] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
+    float vertices[18] = {
+    -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+     0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
     };
     unsigned int VAO;
     unsigned int VBO;
