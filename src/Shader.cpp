@@ -69,7 +69,7 @@ void Shader::LoadShaderFile(int ShaderType){
 	if (!success) {
 		glGetShaderInfoLog(this->Shaders[ShaderType], 512, NULL, infoLog);
 		this->error_string = "Shader Vertex Compilation Failed \n" + std::string(infoLog);
-		this->logger->Log(this->error_string.c_str());
+		this->logger->Log(this->error_string.c_str(), true);
 		throw this->error_string.c_str();
 	}
 	logger->Log("OpenGL Shader has been compiled");
@@ -78,6 +78,7 @@ void Shader::LoadShaderFile(int ShaderType){
 
 Shader::~Shader() {
 	for (int i = 0; i < NUM_OF_SHADERS; i++) {
+        glDetachShader(this->shaderProgram, this->Shaders[i]);
 		glDeleteShader(this->Shaders[i]);
 	}
 	glDeleteProgram(this->shaderProgram);

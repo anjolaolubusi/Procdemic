@@ -2,6 +2,11 @@
 #define MESH_H
 #include "Logger.h"
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+
+struct Vertex{
+    glm::vec3 pos;
+};
 
 class Mesh
 {
