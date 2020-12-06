@@ -8,6 +8,7 @@
 #endif
 #include "Shader.h"
 #include "Mesh.h"
+#include "Texture.h"
 
 #define FPS 60
 Logger logger;
@@ -33,7 +34,13 @@ int main()
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
         Shader ss("basic", &logger);
-        Mesh mm(&logger);
+        Vertex vert[] = {
+        Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)),
+        Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)),
+        Vertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.5f, 1.0f)),
+        };
+        Texture tt("container.jpg", &logger);
+        Mesh mm(vert, tt, &logger);
 
         while (screen.isRunning()) {
             nowTime = glfwGetTime();

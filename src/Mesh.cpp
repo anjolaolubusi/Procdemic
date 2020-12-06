@@ -1,19 +1,40 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Logger* logger) {
+Mesh::Mesh(Vertex* vert, Texture tt, Logger* logger) {
 	this->logger = logger;
-	glGenBuffers(1, &this->VAO);
-	glGenVertexArrays(1, &this->VBO);
-	this->logger->Log("Generating VBO ID");
+	this->textID = tt.texture_id;
+	glGenVertexArrays(1, &this->VAO);
+	this->logger->Log("Generated Vertex Array");
+    glGenBuffers(1, &this->VBO);
+	this->logger->Log("Generated Vertex Buffer Array");
+
 	glBindVertexArray(this->VAO);
+	this->logger->Log("Binding Vertex Array Object");
 	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-	this->logger->Log("Binding VBO ID To GL_ARRAY_BUFFER Object");
-	glBufferData(GL_ARRAY_BUFFER, sizeof(this->vertices), this->vertices, GL_STATIC_DRAW);
-	this->logger->Log("Copy vertex data into array buffer");
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	this->logger->Log("Binding Vertex Buffer Array");
+    glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(Vertex), &vert[0], GL_STATIC_DRAW);
+	this->logger->Log("Sending Vertex Data To Array");
+
+	for (int i = 0; i < NUM_BUFFERS; i++) {
+		switch (i) {
+			case POS:
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(0));
+				glEnableVertexAttribArray(0);
+				this->logger->Log("Position Data Bounds Are Determined");
+				break;
+			case COLORS:
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3)));
+				glEnableVertexAttribArray(1);
+				this->logger->Log("Colour Data Bounds Are Determined");
+				break;
+			case TEXTURES:
+				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)( 2 * sizeof(glm::vec3)));
+				glEnableVertexAttribArray(2);
+				this->logger->Log("Texture Data Bounds Are Determined");
+				break;
+		}
+	}
+
 }
 
 void Mesh::Draw(unsigned int shaderProgram){
@@ -22,7 +43,9 @@ void Mesh::Draw(unsigned int shaderProgram){
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
+
 Mesh::~Mesh() {
 	glDeleteVertexArrays(1, &this->VAO);
-	glDeleteBuffers(1, &this->VBO);
+    glDeleteBuffers(1, &this->VBO);
+	this->logger->Log("Buffers and Vertex Arrays Are Deleted");
 }
