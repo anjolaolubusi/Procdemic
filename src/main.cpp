@@ -33,7 +33,12 @@ int main()
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
         Shader ss("basic", &logger);
-        Mesh mm(&logger);
+        Vertex vert[] = {
+        Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)),
+        Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+        Vertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+        };
+        Mesh mm(vert, &logger);
 
         while (screen.isRunning()) {
             nowTime = glfwGetTime();
