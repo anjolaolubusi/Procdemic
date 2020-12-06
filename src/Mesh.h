@@ -11,16 +11,12 @@ struct Vertex{
      0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
     };*/
 
-    float data[6];
+    glm::vec3 pos;
+    glm::vec3 color;
 
-    Vertex(glm::vec3 pos, glm::vec3 color){
-        for(int i = 0; i < 6; i++){
-            if(i < 3){
-                data[i] = pos[i];
-            }else if(i < 6){
-                data[i] = color[i - 3];
-            }
-        }
+    Vertex(glm::vec3 pos, glm::vec3 color) {
+        this->pos = pos;
+        this->color = color;
     }
 
 };
@@ -32,7 +28,7 @@ public:
     Logger* logger;
     unsigned int VAO;
     enum VertexAttribute{POS, COLORS, NUM_BUFFERS};
-    unsigned int VBO[NUM_BUFFERS];
+    unsigned int VBO;
     void Draw(unsigned int shaderProgram);
     ~Mesh();
 
