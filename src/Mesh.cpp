@@ -1,8 +1,7 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Vertex* vert, Texture tt, Logger* logger) {
+Mesh::Mesh(Vertex* vert, Logger* logger) {
 	this->logger = logger;
-	this->textID = tt.texture_id;
 	glGenVertexArrays(1, &this->VAO);
 	this->logger->Log("Generated Vertex Array");
     glGenBuffers(1, &this->VBO);
@@ -37,8 +36,9 @@ Mesh::Mesh(Vertex* vert, Texture tt, Logger* logger) {
 
 }
 
-void Mesh::Draw(unsigned int shaderProgram){
+void Mesh::Draw(unsigned int shaderProgram, unsigned int texture){
 	glUseProgram(shaderProgram);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glBindVertexArray(this->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }

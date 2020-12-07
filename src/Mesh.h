@@ -27,13 +27,13 @@ struct Vertex{
 class Mesh
 {
 public:
-	Mesh(Vertex* vert, Texture tt, Logger* logger);
+	Mesh(Vertex* vert, Logger* logger);
     Logger* logger;
     unsigned int VAO;
     enum VertexAttribute{POS, COLORS, TEXTURES, NUM_BUFFERS};
     unsigned int VBO;
     unsigned int textID;
-    void Draw(unsigned int shaderProgram);
+    void Draw(unsigned int shaderProgram, unsigned int texture);
     ~Mesh();
 
 };
