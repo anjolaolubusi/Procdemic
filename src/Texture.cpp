@@ -24,6 +24,16 @@ Texture::Texture(const char* file, Logger* logger) {
 
 }
 
+void Texture::Draw(unsigned int unit) {
+	if (unit < 0 || unit > 31) {
+		logger->Log("Unit is outside of acceptable range", true);
+		throw "Unit is outside of acceptable range";
+	}
+
+	glActiveTexture(GL_TEXTURE0 + unit);
+	glBindTexture(GL_TEXTURE_2D, this->texture_id);
+}
+
 Texture::~Texture() {
 	glDeleteTextures(1, &this->texture_id);
 }

@@ -9,7 +9,9 @@
 class Texture {
 public:
 	Texture(const char* fileP, Logger* logger);
+	void Draw(unsigned int ID);
 	~Texture();
+
 	Logger* logger;
 	unsigned char* data;
 	unsigned int texture_id;
