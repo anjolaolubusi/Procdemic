@@ -28,19 +28,21 @@ void ErrorCallback(int error, const char* description) {
 int main()
 {
     try {
-        Window screen(800, 600, "Test", &logger);
+        Window screen(1280, 720, "Test", &logger);
         glfwSetKeyCallback(screen.window, Input);
         glfwSetErrorCallback(ErrorCallback);
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
         Shader ss("basic", &logger);
         Vertex vert[] = {
-        Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)),
-        Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)),
-        Vertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.5f, 1.0f)),
+        Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)),
+        Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)),
+        Vertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.5f, 1.0f)),
         };
         Texture tt("container.jpg", &logger);
         Mesh mm(vert, sizeof(vert)/sizeof(vert[0]), &logger);
+        Transform trans;
+        float counter = 0.0f;
 
         while (screen.isRunning()) {
             nowTime = glfwGetTime();
@@ -49,8 +51,16 @@ int main()
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime);
                 glClear(GL_COLOR_BUFFER_BIT);
                 glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+                
+                trans.GetPos()->x = sinf(counter);
+                trans.GetPos()->y = cosf(counter);
+
+                ss.Update(trans);
                 mm.Draw(ss.shaderProgram);
                 tt.Draw(0);
+                
+                counter += 0.1f;
+
                 screen.Update();
                 lastTime = glfwGetTime();
             }

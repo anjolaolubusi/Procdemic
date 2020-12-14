@@ -26,6 +26,8 @@ Shader::Shader(std::string shaderName, Logger* logger) {
 		throw error_string.c_str();
 	}
 	this->logger->Log("Shader Program has been compiled");
+
+	this->Uniforms[TRANS_UNIFROM] = glGetUniformLocation(this->shaderProgram, "transform");
 }
 
 void Shader::Use(){
@@ -75,6 +77,9 @@ void Shader::LoadShaderFile(int ShaderType){
 	logger->Log("OpenGL Shader has been compiled");
 }
 
+void Shader::Update(Transform transform){
+	glUniformMatrix4fv(this->Uniforms[TRANS_UNIFROM], 1, false, &transform.GetModel()[0][0]);
+}
 
 Shader::~Shader() {
 	for (int i = 0; i < NUM_OF_SHADERS; i++) {
