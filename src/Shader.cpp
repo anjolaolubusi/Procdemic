@@ -1,5 +1,6 @@
 #include "Shader.h"
 
+//Constructor
 Shader::Shader(std::string shaderName, Logger* logger) {
 	this->logger = logger;
 	this->ShaderName = shaderName;
@@ -31,10 +32,12 @@ Shader::Shader(std::string shaderName, Logger* logger) {
 	this->Uniforms[CAMERA_UNIFORM] = glGetUniformLocation(this->shaderProgram, "camera");
 }
 
+//Activates Shader
 void Shader::Use(){
 	glUseProgram(this->shaderProgram);
 }
 
+//Loads the Shader files (Vertex and Fragment)
 void Shader::LoadShaderFile(int ShaderType){
 	std::ifstream shaderFile;
 	std::string temp_fileDir = this->fileDir;
@@ -78,11 +81,13 @@ void Shader::LoadShaderFile(int ShaderType){
 	logger->Log("OpenGL Shader has been compiled");
 }
 
+//Updates varibles in the Vertex shader
 void Shader::Update(Transform transform, Camera camera){
 	glUniformMatrix4fv(this->Uniforms[TRANS_UNIFROM], 1, false, &transform.GetModel()[0][0]);
 	glUniformMatrix4fv(this->Uniforms[CAMERA_UNIFORM], 1, false, &camera.cameraMatrix()[0][0]);
 }
 
+//Clears out Shader
 Shader::~Shader() {
 	for (int i = 0; i < NUM_OF_SHADERS; i++) {
         glDetachShader(this->shaderProgram, this->Shaders[i]);

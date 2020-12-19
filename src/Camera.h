@@ -7,17 +7,15 @@
 struct Camera
 {
     public:
-        Camera() {
-        
-        }
 
-        glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
-        glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-        glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, -6.0f); //Camera's current position
+        glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f); //Camera's forward facing direction
+        glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); //Camera's Up vector
 
         float cameraSpeed = 0.20f;
         float sensitivity = 1.0f;
 
+        //Moves the camera
         void MoveCamera(GLFWwindow *window) {
             cameraPos += cameraSpeed * (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) * cameraFront;
             cameraPos -= cameraSpeed * (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) * cameraFront;
@@ -31,7 +29,8 @@ struct Camera
         bool firstRun = true;
         float yaw, pitch = 0.0f;
 
-        void RotateCamera(GLFWwindow *window) {
+        //Rotates the Camera
+        void RotateCamera(GLFWwindow* window) {
             double xpos, ypos;
             glfwGetCursorPos(window, &xpos, &ypos);
 
@@ -62,7 +61,8 @@ struct Camera
             direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
             cameraFront = glm::normalize(direction);
         }
-            
+        
+        //Returns projection * view matrix
         glm::mat4 cameraMatrix() {
         return glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f) * glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         }

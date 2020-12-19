@@ -1,5 +1,6 @@
 #include "Mesh.h"
 
+//Mesh constructor
 Mesh::Mesh(Vertex* vert, size_t NumberOfVertices, Logger* logger) {
 	this->logger = logger;
 	glGenVertexArrays(1, &this->VAO);
@@ -37,13 +38,14 @@ Mesh::Mesh(Vertex* vert, size_t NumberOfVertices, Logger* logger) {
 	glBindVertexArray(this->VAO);
 }
 
+//Draws the mesh
 void Mesh::Draw(unsigned int shaderProgram){
 	glUseProgram(shaderProgram);
 	glBindVertexArray(this->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-
+//Mesh Destructor
 Mesh::~Mesh() {
 	glDeleteVertexArrays(1, &this->VAO);
     glDeleteBuffers(1, &this->VBO);

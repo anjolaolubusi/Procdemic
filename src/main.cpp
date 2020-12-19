@@ -49,6 +49,7 @@ int main()
         Camera cam;
 
         while (screen.isRunning()) {
+            glfwPollEvents();
             nowTime = glfwGetTime();
             deltaTime = nowTime - lastTime;
             if (1 / deltaTime < FPS) {
@@ -60,7 +61,6 @@ int main()
                 cam.RotateCamera(screen.window);
 
                 trans.GetRot()->y = sin(counter);
-                //trans.GetRot()->z = cosf(counter);
                 trans.GetPos()->z = -2;
 
                 trans1.GetPos()->z = -2;
