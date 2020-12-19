@@ -28,6 +28,7 @@ Shader::Shader(std::string shaderName, Logger* logger) {
 	this->logger->Log("Shader Program has been compiled");
 
 	this->Uniforms[TRANS_UNIFROM] = glGetUniformLocation(this->shaderProgram, "transform");
+	this->Uniforms[CAMERA_UNIFORM] = glGetUniformLocation(this->shaderProgram, "camera");
 }
 
 void Shader::Use(){
@@ -77,8 +78,9 @@ void Shader::LoadShaderFile(int ShaderType){
 	logger->Log("OpenGL Shader has been compiled");
 }
 
-void Shader::Update(Transform transform){
+void Shader::Update(Transform transform, Camera camera){
 	glUniformMatrix4fv(this->Uniforms[TRANS_UNIFROM], 1, false, &transform.GetModel()[0][0]);
+	glUniformMatrix4fv(this->Uniforms[CAMERA_UNIFORM], 1, false, &camera.cameraMatrix()[0][0]);
 }
 
 Shader::~Shader() {

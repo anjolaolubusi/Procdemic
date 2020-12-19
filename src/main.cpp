@@ -9,6 +9,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Camera.h"
 
 #define FPS 60
 Logger logger;
@@ -28,7 +29,7 @@ void ErrorCallback(int error, const char* description) {
 int main()
 {
     try {
-        Window screen(1280, 720, "Test", &logger);
+        Window screen(800, 600, "Test", &logger);
         glfwSetKeyCallback(screen.window, Input);
         glfwSetErrorCallback(ErrorCallback);
         double lastTime = glfwGetTime();
@@ -41,22 +42,40 @@ int main()
         };
         Texture tt("container.jpg", &logger);
         Mesh mm(vert, sizeof(vert)/sizeof(vert[0]), &logger);
+        Mesh mm2(vert, sizeof(vert) / sizeof(vert[0]), &logger);
         Transform trans;
+        Transform trans1;
         float counter = 0.0f;
+        Camera cam;
 
         while (screen.isRunning()) {
             nowTime = glfwGetTime();
             deltaTime = nowTime - lastTime;
             if (1 / deltaTime < FPS) {
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime);
-                glClear(GL_COLOR_BUFFER_BIT);
+                glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
                 glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-                
-                trans.GetPos()->x = sinf(counter);
-                trans.GetPos()->y = cosf(counter);
 
-                ss.Update(trans);
-                mm.Draw(ss.shaderProgram);
+                cam.MoveCamera(screen.window);
+                cam.RotateCamera(screen.window);
+
+                trans.GetRot()->y = sin(counter);
+                //trans.GetRot()->z = cosf(counter);
+                trans.GetPos()->z = -2;
+
+                trans1.GetPos()->z = -2;
+                trans1.GetPos()->x = 1;
+
+                for (int i = 0; i < 2; i++) {
+                    if (i == 0) {
+                        ss.Update(trans, cam);
+                        mm.Draw(ss.shaderProgram);
+                    }
+                    else {
+                        ss.Update(trans1, cam);
+                        mm2.Draw(ss.shaderProgram);
+                    }
+                }
                 tt.Draw(0);
                 
                 counter += 0.1f;
