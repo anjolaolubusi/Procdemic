@@ -8,8 +8,10 @@
 
 class Texture {
 public:
-	Texture(const char* fileP, Logger* logger);
-	void Draw(unsigned int ID);
+	Texture();
+	Texture(const Texture& texture);
+	Texture(Logger* logger, std::string filename="default.jpg");
+	void Draw(unsigned int unit);
 	~Texture();
 
 	Logger* logger;

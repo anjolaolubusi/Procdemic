@@ -1,5 +1,15 @@
 #include "Mesh.h"
 
+Mesh::Mesh() {
+
+}
+
+Mesh::Mesh(const Mesh& mesh) {
+	this->logger = mesh.logger;
+	this->VAO = mesh.VAO;
+	this->VBO = mesh.VBO;
+}
+
 //Mesh constructor
 Mesh::Mesh(Vertex* vert, size_t NumberOfVertices, Logger* logger) {
 	this->logger = logger;

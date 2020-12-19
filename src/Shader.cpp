@@ -37,6 +37,7 @@ void Shader::Use(){
 	glUseProgram(this->shaderProgram);
 }
 
+
 //Loads the Shader files (Vertex and Fragment)
 void Shader::LoadShaderFile(int ShaderType){
 	std::ifstream shaderFile;

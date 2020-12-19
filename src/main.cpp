@@ -10,6 +10,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "Object.h"
 
 #define FPS 60
 Logger logger;
@@ -40,11 +41,10 @@ int main()
         Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)),
         Vertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.5f, 1.0f)),
         };
-        Texture tt("container.jpg", &logger);
+        Texture tt(&logger, "container.jpg");
         Mesh mm(vert, sizeof(vert)/sizeof(vert[0]), &logger);
-        Mesh mm2(vert, sizeof(vert) / sizeof(vert[0]), &logger);
+        Object obj(Mesh(vert, sizeof(vert) / sizeof(vert[0]), &logger), Texture(&logger, "container.jpg"));
         Transform trans;
-        Transform trans1;
         float counter = 0.0f;
         Camera cam;
 
@@ -63,8 +63,8 @@ int main()
                 trans.GetRot()->y = sin(counter);
                 trans.GetPos()->z = -2;
 
-                trans1.GetPos()->z = -2;
-                trans1.GetPos()->x = 1;
+                obj.transform.GetPos()->z = -2;
+                obj.transform.GetPos()->x = 1;
 
                 for (int i = 0; i < 2; i++) {
                     if (i == 0) {
@@ -72,8 +72,8 @@ int main()
                         mm.Draw(ss.shaderProgram);
                     }
                     else {
-                        ss.Update(trans1, cam);
-                        mm2.Draw(ss.shaderProgram);
+                        ss.Update(obj.transform, cam);
+                        obj.Draw(ss.shaderProgram);
                     }
                 }
                 tt.Draw(0);

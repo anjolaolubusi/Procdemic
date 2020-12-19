@@ -27,7 +27,8 @@ struct Camera
 
         float lastX = 400, lastY = 300;
         bool firstRun = true;
-        float yaw, pitch = 0.0f;
+        float yaw = 0.0f;
+        float pitch = 0.0f;
 
         //Rotates the Camera
         void RotateCamera(GLFWwindow* window) {

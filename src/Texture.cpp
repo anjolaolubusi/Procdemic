@@ -1,7 +1,17 @@
 #include "Texture.h"
 
+Texture::Texture() {
+
+}
+
+Texture::Texture(const Texture& texture) {
+	this->logger = texture.logger;
+	this->texture_id = texture.texture_id;
+}
+
 //Construtor
-Texture::Texture(const char* file, Logger* logger) {
+Texture::Texture(Logger* logger, std::string filename) {
+	const char* file = filename.c_str();
 	int width, height, nrChannels;
 	this->logger = logger;
 	this->data = stbi_load(file, &width, &height, &nrChannels, 0);
@@ -25,7 +35,6 @@ Texture::Texture(const char* file, Logger* logger) {
 
 }
 
-//Draws the texture
 void Texture::Draw(unsigned int unit) {
 	if (unit < 0 || unit > 31) {
 		logger->Log("Unit is outside of acceptable range", true);
@@ -38,5 +47,6 @@ void Texture::Draw(unsigned int unit) {
 
 //Deletes the Texture
 Texture::~Texture() {
+	glActiveTexture(GL_TEXTURE0);
 	glDeleteTextures(1, &this->texture_id);
 }
