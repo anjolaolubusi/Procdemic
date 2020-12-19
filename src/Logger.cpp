@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-
+// Logger constructor
 Logger::Logger() {
 	this->now = time(0);
 	this->curr_date = localtime(&now);
@@ -22,6 +22,7 @@ Logger::Logger() {
 	this->Log("Initalizing Logger");
 }
 
+//Logs the infomation
 void Logger::Log(const char* log, bool error) {
 	this->now = time(0);
 	this->curr_date = localtime(&now);
@@ -33,6 +34,7 @@ void Logger::Log(const char* log, bool error) {
 		fprintf(fptr, "%s\n", log);
 }
 
+//Destructor
 Logger::~Logger() {
 	this->now = time(0);
 	this->curr_date = localtime(&now);

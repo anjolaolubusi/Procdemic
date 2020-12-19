@@ -1,8 +1,18 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Vertex* vert, Texture tt, Logger* logger) {
+Mesh::Mesh() {
+
+}
+
+Mesh::Mesh(const Mesh& mesh) {
+	this->logger = mesh.logger;
+	this->VAO = mesh.VAO;
+	this->VBO = mesh.VBO;
+}
+
+//Mesh constructor
+Mesh::Mesh(Vertex* vert, size_t NumberOfVertices, Logger* logger) {
 	this->logger = logger;
-	this->textID = tt.texture_id;
 	glGenVertexArrays(1, &this->VAO);
 	this->logger->Log("Generated Vertex Array");
     glGenBuffers(1, &this->VBO);
@@ -12,7 +22,7 @@ Mesh::Mesh(Vertex* vert, Texture tt, Logger* logger) {
 	this->logger->Log("Binding Vertex Array Object");
 	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 	this->logger->Log("Binding Vertex Buffer Array");
-    glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(Vertex), &vert[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, NumberOfVertices * sizeof(Vertex), &vert[0], GL_STATIC_DRAW);
 	this->logger->Log("Sending Vertex Data To Array");
 
 	for (int i = 0; i < NUM_BUFFERS; i++) {
@@ -35,15 +45,17 @@ Mesh::Mesh(Vertex* vert, Texture tt, Logger* logger) {
 		}
 	}
 
+	glBindVertexArray(this->VAO);
 }
 
+//Draws the mesh
 void Mesh::Draw(unsigned int shaderProgram){
 	glUseProgram(shaderProgram);
 	glBindVertexArray(this->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-
+//Mesh Destructor
 Mesh::~Mesh() {
 	glDeleteVertexArrays(1, &this->VAO);
     glDeleteBuffers(1, &this->VBO);

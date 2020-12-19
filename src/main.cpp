@@ -9,6 +9,8 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Camera.h"
+#include "Object.h"
 
 #define FPS 60
 Logger logger;
@@ -35,21 +37,49 @@ int main()
         double nowTime, deltaTime = 0;
         Shader ss("basic", &logger);
         Vertex vert[] = {
-        Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)),
-        Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)),
-        Vertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.5f, 1.0f)),
+        Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)),
+        Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)),
+        Vertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.5f, 1.0f)),
         };
-        Texture tt("container.jpg", &logger);
-        Mesh mm(vert, tt, &logger);
+        Texture tt(&logger, "container.jpg");
+        Mesh mm(vert, sizeof(vert)/sizeof(vert[0]), &logger);
+        Object obj(Mesh(vert, sizeof(vert) / sizeof(vert[0]), &logger), Texture(&logger, "container.jpg"));
+        Transform trans;
+        float counter = 0.0f;
+        Camera cam;
 
         while (screen.isRunning()) {
+            glfwPollEvents();
             nowTime = glfwGetTime();
             deltaTime = nowTime - lastTime;
             if (1 / deltaTime < FPS) {
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime);
-                glClear(GL_COLOR_BUFFER_BIT);
+                glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
                 glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-                mm.Draw(ss.shaderProgram);
+
+                cam.MoveCamera(screen.window);
+                cam.RotateCamera(screen.window);
+
+                trans.GetRot()->y = sin(counter);
+                trans.GetPos()->z = -2;
+
+                obj.transform.GetPos()->z = -2;
+                obj.transform.GetPos()->x = 1;
+
+                for (int i = 0; i < 2; i++) {
+                    if (i == 0) {
+                        ss.Update(trans, cam);
+                        mm.Draw(ss.shaderProgram);
+                    }
+                    else {
+                        ss.Update(obj.transform, cam);
+                        obj.Draw(ss.shaderProgram);
+                    }
+                }
+                tt.Draw(0);
+                
+                counter += 0.1f;
+
                 screen.Update();
                 lastTime = glfwGetTime();
             }

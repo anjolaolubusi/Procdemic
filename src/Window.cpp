@@ -42,7 +42,9 @@ Window::Window(int width, int height, const char* title, Logger* logger){
 
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
+    glEnable(GL_DEPTH_TEST);
     glfwSetFramebufferSizeCallback(window, Resize);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 }
 
