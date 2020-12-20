@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 #include <GLFW/glfw3.h>
 #include "Window.h"
 
@@ -17,13 +18,10 @@ struct Camera
         float sensitivity = 1.0f;
 
         //Moves the camera
-        void MoveCamera(GLFWwindow *window) {
-            cameraPos += cameraSpeed * (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) * cameraFront;
-            cameraPos -= cameraSpeed * (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) * cameraFront;
-            cameraPos -= cameraSpeed * (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) * glm::normalize(glm::cross(cameraFront, cameraUp));
-            cameraPos += cameraSpeed * (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) * glm::normalize(glm::cross(cameraFront, cameraUp));
-            cameraPos -= cameraSpeed * (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) * cameraUp;
-            cameraPos += cameraSpeed * (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) * cameraUp;
+        void MoveCamera(Window &window) {
+            cameraPos += cameraSpeed * ((glfwGetKey(window.window, GLFW_KEY_W) == GLFW_PRESS) - (glfwGetKey(window.window, GLFW_KEY_S) == GLFW_PRESS)) * cameraFront;
+            cameraPos -= cameraSpeed * ((glfwGetKey(window.window, GLFW_KEY_A) == GLFW_PRESS) - (glfwGetKey(window.window, GLFW_KEY_D) == GLFW_PRESS)) * glm::normalize(glm::cross(cameraFront, cameraUp));
+            cameraPos -= cameraSpeed * ((glfwGetKey(window.window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) - (glfwGetKey(window.window, GLFW_KEY_SPACE) == GLFW_PRESS)) * cameraUp;
         }
 
         double lastX = 400, lastY = 300;
@@ -73,7 +71,7 @@ struct Camera
         
         //Returns projection * view matrix
         glm::mat4 cameraMatrix() {
-        return glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f) * glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+            return glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f) * glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         }
 
 };

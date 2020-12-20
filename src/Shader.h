@@ -1,4 +1,4 @@
-#ifndef SHADER_H
+	#ifndef SHADER_H
 #define SHADER_H
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -13,7 +13,7 @@ class Shader
 public: 
 	Shader(std::string shaderName, Logger* logger);
 	void Use();
-	void Update(Transform transform, Camera camera);
+	void Update(Transform& transform, Camera& camera);
 	~Shader();
 	void LoadShaderFile(int ShaderType);
 

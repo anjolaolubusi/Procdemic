@@ -83,7 +83,7 @@ void Shader::LoadShaderFile(int ShaderType){
 }
 
 //Updates varibles in the Vertex shader
-void Shader::Update(Transform transform, Camera camera){
+void Shader::Update(Transform& transform, Camera& camera){
 	glUniformMatrix4fv(this->Uniforms[TRANS_UNIFROM], 1, false, &transform.GetModel()[0][0]);
 	glUniformMatrix4fv(this->Uniforms[CAMERA_UNIFORM], 1, false, &camera.cameraMatrix()[0][0]);
 }
