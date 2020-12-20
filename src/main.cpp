@@ -14,11 +14,26 @@
 
 #define FPS 60
 Logger logger;
+Camera cam;
+Window screen(800, 600, "Test", &logger);
+
 
 void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
+    if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+        screen.isPaused = !screen.isPaused;
+        glfwGetCursorPos(window, &cam.oldX, &cam.oldY);
+        if (screen.isPaused) {
+            screen.hasBeenPaused = true;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+        else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+    }
+
 }
 
 //Error handeller
@@ -30,7 +45,6 @@ void ErrorCallback(int error, const char* description) {
 int main()
 {
     try {
-        Window screen(800, 600, "Test", &logger);
         glfwSetKeyCallback(screen.window, Input);
         glfwSetErrorCallback(ErrorCallback);
         double lastTime = glfwGetTime();
@@ -46,7 +60,6 @@ int main()
         Object obj(Mesh(vert, sizeof(vert) / sizeof(vert[0]), &logger), Texture(&logger, "container.jpg"));
         Transform trans;
         float counter = 0.0f;
-        Camera cam;
 
         while (screen.isRunning()) {
             glfwPollEvents();
@@ -54,33 +67,35 @@ int main()
             deltaTime = nowTime - lastTime;
             if (1 / deltaTime < FPS) {
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime);
-                glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
-                glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+                if (!screen.isPaused) {
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-                cam.MoveCamera(screen.window);
-                cam.RotateCamera(screen.window);
+                    cam.MoveCamera(screen.window);
+                    cam.RotateCamera(screen);
 
-                trans.GetRot()->y = sin(counter);
-                trans.GetPos()->z = -2;
+                    trans.GetRot()->y = sin(counter);
+                    trans.GetPos()->z = -2;
 
-                obj.transform.GetPos()->z = -2;
-                obj.transform.GetPos()->x = 1;
+                    obj.transform.GetPos()->z = -2;
+                    obj.transform.GetPos()->x = 1;
 
-                for (int i = 0; i < 2; i++) {
-                    if (i == 0) {
-                        ss.Update(trans, cam);
-                        mm.Draw(ss.shaderProgram);
+                    for (int i = 0; i < 2; i++) {
+                        if (i == 0) {
+                            ss.Update(trans, cam);
+                            mm.Draw(ss.shaderProgram);
+                        }
+                        else {
+                            ss.Update(obj.transform, cam);
+                            obj.Draw(ss.shaderProgram);
+                        }
                     }
-                    else {
-                        ss.Update(obj.transform, cam);
-                        obj.Draw(ss.shaderProgram);
-                    }
+                    tt.Draw(0);
+
+                    counter += 0.1f;
+
+                    screen.Update();
                 }
-                tt.Draw(0);
-                
-                counter += 0.1f;
-
-                screen.Update();
                 lastTime = glfwGetTime();
             }
             else {

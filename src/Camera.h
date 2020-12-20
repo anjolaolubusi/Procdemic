@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
+#include "Window.h"
 
 struct Camera
 {
@@ -25,20 +26,27 @@ struct Camera
             cameraPos += cameraSpeed * (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) * cameraUp;
         }
 
-        float lastX = 400, lastY = 300;
+        double lastX = 400, lastY = 300;
+        double oldX, oldY;
         bool firstRun = true;
         float yaw = 0.0f;
         float pitch = 0.0f;
 
         //Rotates the Camera
-        void RotateCamera(GLFWwindow* window) {
+        void RotateCamera(Window& window) {
             double xpos, ypos;
-            glfwGetCursorPos(window, &xpos, &ypos);
+            glfwGetCursorPos(window.window, &xpos, &ypos);
 
             if (firstRun) {
                 lastX = xpos;
                 lastY = ypos;
                 firstRun = false;
+            }
+
+            if (window.hasBeenPaused) {
+                lastX = oldX;
+                lastY = oldY;
+                window.hasBeenPaused = false;
             }
 
             float xoffset = (xpos - lastX) * sensitivity;

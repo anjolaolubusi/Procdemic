@@ -21,6 +21,8 @@ class Window
 
         const char* title;
         Logger* logger;
+        bool isPaused = false;
+        bool hasBeenPaused = false;
 
     protected:
 
