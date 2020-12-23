@@ -29,12 +29,13 @@ class Mesh
 public:
     Mesh();
     Mesh(const Mesh &mesh);
-	Mesh(Vertex* vert, size_t NumberOfVertices, Logger* logger);
+	Mesh(Vertex* vert, size_t NumberOfVertices, unsigned int* indices, unsigned int numIndices, Logger* logger);
     Logger* logger;
     unsigned int VAO;
-    enum VertexAttribute{POS, COLORS, TEXTURES, NUM_BUFFERS};
-    unsigned int VBO;
+    enum BUFFERS{POS, COLORS, TEXTURES, INDEX, NUM_BUFFERS};
+    unsigned int VBO[NUM_BUFFERS];
     void Draw(unsigned int shaderProgram);
+    unsigned int NumOfIndices;
     ~Mesh();
 
 };

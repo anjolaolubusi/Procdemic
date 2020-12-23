@@ -11,6 +11,8 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Object.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #define FPS 60
 Logger logger;
@@ -55,9 +57,10 @@ int main()
         Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)),
         Vertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.5f, 1.0f)),
         };
+        unsigned int indices[] = { 0, 1, 2 };
         Texture tt(&logger, "container.jpg");
-        Mesh mm(vert, sizeof(vert)/sizeof(vert[0]), &logger);
-        Object obj(Mesh(vert, sizeof(vert) / sizeof(vert[0]), &logger), Texture(&logger, "container.jpg"));
+        Mesh mm(vert, sizeof(vert)/sizeof(vert[0]), indices, sizeof(indices)/sizeof(indices[0]), &logger);
+        Object obj(Mesh(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), &logger), Texture(&logger, "container.jpg"));
         Transform trans;
         float counter = 0.0f;
 
@@ -74,14 +77,14 @@ int main()
                     cam.MoveCamera(screen);
                     cam.RotateCamera(screen);
 
-                    trans.GetRot()->y = sin(counter);
+                    trans.GetRot()->x = sinf(glfwGetTime() * (M_PI/180) * 100);
                     trans.GetPos()->z = -2;
 
                     obj.transform.GetPos()->z = -2;
                     obj.transform.GetPos()->x = 1;
 
                     for (int i = 0; i < 2; i++) {
-                        if (i == 0) {
+                        if (i == 0) {    
                             ss.Update(trans, cam);
                             mm.Draw(ss.shaderProgram);
                         }
