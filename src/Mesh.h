@@ -13,12 +13,10 @@ struct Vertex{
     };*/
 
     glm::vec3 pos;
-    glm::vec3 color;
     glm::vec2 tex;
 
-    Vertex(glm::vec3 pos, glm::vec3 color, glm::vec2 tex) {
+    Vertex(glm::vec3 pos, glm::vec2 tex) {
         this->pos = pos;
-        this->color = color;
         this->tex = tex;
     }
 
@@ -32,7 +30,7 @@ public:
 	Mesh(Vertex* vert, size_t NumberOfVertices, unsigned int* indices, unsigned int numIndices, Logger* logger);
     Logger* logger;
     unsigned int VAO;
-    enum BUFFERS{POS, COLORS, TEXTURES, INDEX, NUM_BUFFERS};
+    enum BUFFERS{POS, TEXTURES, INDEX, NUM_BUFFERS};
     unsigned int VBO[NUM_BUFFERS];
     void Draw(unsigned int shaderProgram);
     unsigned int NumOfIndices;

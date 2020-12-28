@@ -35,22 +35,13 @@ Mesh::Mesh(Vertex* vert, size_t NumberOfVertices, unsigned int* indices, unsigne
 				glEnableVertexAttribArray(0);
 				this->logger->Log("Position Data Bounds Are Determined");
 				break;
-			case COLORS:
-				glBindBuffer(GL_ARRAY_BUFFER, this->VBO[COLORS]);
-				this->logger->Log("Binding Vertex Buffer Array");
-				glBufferData(GL_ARRAY_BUFFER, NumberOfVertices * sizeof(vert[0]), &vert[0], GL_STATIC_DRAW);
-				this->logger->Log("Sending Vertex Data To Array");
-				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vert[0]), (void*)(sizeof(glm::vec3)));
-				glEnableVertexAttribArray(1);
-				this->logger->Log("Colour Data Bounds Are Determined");
-				break;
 			case TEXTURES:
 				glBindBuffer(GL_ARRAY_BUFFER, this->VBO[TEXTURES]);
 				this->logger->Log("Binding Vertex Buffer Array");
 				glBufferData(GL_ARRAY_BUFFER, NumberOfVertices * sizeof(vert[0]), &vert[0], GL_STATIC_DRAW);
 				this->logger->Log("Sending Vertex Data To Array");
-				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vert[0]), (void*)( 2 * sizeof(glm::vec3)));
-				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vert[0]), (void*)( sizeof(glm::vec3)));
+				glEnableVertexAttribArray(1);
 				this->logger->Log("Texture Data Bounds Are Determined");
 				break;
 			case INDEX:

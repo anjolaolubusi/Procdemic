@@ -6,20 +6,24 @@
 struct Object {
 public:
 	Transform transform;
-	Mesh mesh;
-//	Texture texture;
+	Mesh* mesh;
+	Texture texture;
 	Object() {
 	
 	}
 
-	Object(Mesh mesh, Texture texture) {
-		this->mesh = mesh;
-		//this->texture = texture;
+	Object(Vertex* vert, size_t NumberOfVertices, unsigned int* indices, unsigned int numIndices, Texture& texture, Logger* logger) {
+		this->mesh = new Mesh(vert, NumberOfVertices, indices, numIndices, logger);
+		this->texture = texture;
 	}
 
 	void Draw(unsigned int shaderProgram) {
-		this->mesh.Draw(shaderProgram);
-	//	this->texture.Draw(0);
+		this->mesh->Draw(shaderProgram);
+		this->texture.Draw(0);
+	}
+
+	~Object() {
+		free(mesh);
 	}
 };
 

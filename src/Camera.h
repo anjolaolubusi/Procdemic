@@ -25,7 +25,7 @@ struct Camera
         }
 
         double lastX = 400, lastY = 300;
-        double oldX, oldY;
+        double oldX = 0, oldY = 0;
         bool firstRun = true;
         float yaw = 0.0f;
         float pitch = 0.0f;
