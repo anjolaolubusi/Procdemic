@@ -25,8 +25,6 @@ struct Vertex{
 class Mesh
 {
 public:
-    Mesh();
-    Mesh(const Mesh &mesh);
 	Mesh(Vertex* vert, size_t NumberOfVertices, unsigned int* indices, unsigned int numIndices, Logger* logger);
     Logger* logger;
     unsigned int VAO;

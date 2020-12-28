@@ -1,18 +1,5 @@
 #include "Mesh.h"
 
-Mesh::Mesh() {
-
-}
-
-Mesh::Mesh(const Mesh& mesh) {
-	this->logger = mesh.logger;
-	this->VAO = mesh.VAO;
-	for (int i = 0; i < NUM_BUFFERS; i++) {
-		this->VBO[i] = mesh.VBO[i];
-	}
-	this->NumOfIndices = mesh.NumOfIndices;
-}
-
 //Mesh constructor
 Mesh::Mesh(Vertex* vert, size_t NumberOfVertices, unsigned int* indices, unsigned int numIndices, Logger* logger) {
 	this->logger = logger;

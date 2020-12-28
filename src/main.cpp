@@ -51,8 +51,8 @@ int main()
         glfwSetErrorCallback(ErrorCallback);
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
-        Shader ss("basic", "lightsource", &logger);
-        Shader obj("basic", "lightsource", &logger);
+        Shader LS("basic", "lightsource", &logger);
+        Shader LR("basic", &logger);
         Vertex vert[] = {
         Vertex(glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f)),
         Vertex(glm::vec3(1.0f, 1.0f, -1.0), glm::vec2(1.0f, 0.0f)),
@@ -81,10 +81,12 @@ int main()
          };
         Texture tt(&logger, "container.jpg");
         Texture tt2(&logger);
-        Object LightObject(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), tt, &logger);
+        Object LightSource(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), tt, &logger);
         Object LightReciever(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), tt2, &logger);
         float counter = 0.0f;
-
+        glm::vec3 ourColor(0.5f, 0.2f, 0.4f);
+        glm::vec3 Light(1.0f, 1.0f, 1.0f);
+            
         while (screen.isRunning()) {
             glfwPollEvents();
             nowTime = glfwGetTime();
@@ -99,16 +101,18 @@ int main()
                     cam.RotateCamera(screen);
 
                     //trans.GetRot()->y = sin(glfwGetTime() * (M_PI / 180)) * 100;
-                    LightObject.transform.GetPos()->z = -2;
-                    LightObject.transform.GetPos()->x = 10;
+                    LightSource.transform.GetPos()->z = -2;
+                    LightSource.transform.GetPos()->x = 10;
                     LightReciever.transform.GetPos()->z = -2;
                     LightReciever.transform.GetPos()->x = 15;
 
-                    ss.Update(LightObject.transform, cam);
-                    LightObject.Draw(ss.shaderProgram);
-                    ss.Update(LightReciever.transform, cam);
-                    LightReciever.Draw(obj.shaderProgram);
-
+                    LS.Update(LightSource.transform, cam);
+                    LightSource.Draw(LS.shaderProgram);
+                    LR.Update(LightReciever.transform, cam);
+                    LightReciever.Draw(LR.shaderProgram);
+                    glUniform3fv(glGetUniformLocation(LR.shaderProgram, "ourColor"), 1, &ourColor[0]);
+                    glUniform3fv(glGetUniformLocation(LR.shaderProgram, "lightcolor"), 1, &Light[0]);
+                    Light.x = sin(glfwGetTime() * (M_PI / 180)) * 5;
                     screen.Update();
                 }
                 lastTime = glfwGetTime();
