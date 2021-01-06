@@ -19,6 +19,7 @@ Logger logger;
 Camera cam;
 Window screen(800, 600, "Test", &logger);
 
+//Test
 
 void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
