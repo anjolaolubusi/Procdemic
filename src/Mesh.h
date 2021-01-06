@@ -14,10 +14,12 @@ struct Vertex{
 
     glm::vec3 pos;
     glm::vec2 tex;
+    glm::vec3 norm;
 
-    Vertex(glm::vec3 pos, glm::vec2 tex) {
+    Vertex(glm::vec3 pos, glm::vec2 tex, glm::vec3 norm) {
         this->pos = pos;
         this->tex = tex;
+        this->norm = norm;
     }
 
 };
