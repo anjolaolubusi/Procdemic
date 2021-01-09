@@ -52,8 +52,6 @@ int main()
         glfwSetErrorCallback(ErrorCallback);
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
-        Shader LS("basic", "lightsource", &logger);
-        Shader LR("basic", &logger);
         Vertex vert[] = {
         Vertex(glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)), //0
         Vertex(glm::vec3(1.0f, 1.0f, -1.0), glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)),
@@ -104,13 +102,11 @@ int main()
         20, 22, 23,
         20, 21, 23,
          };
-        Texture tt(&logger, "container.jpg");
-        Texture tt2(&logger);
-        LightSource lightSource(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), tt2, &logger);
-        WorldObject LightReciever(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), tt, &logger);
+        LightSource lightSource(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), "default.jpg", &logger);
+        WorldObject LightReciever(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), "container.jpg", &logger);
+        Shader LS("lightsource", &logger);
+        Shader LR("basic", &logger);
         float counter = 0.0f;
-        float ambient = 0.5f;
-        LightReciever.Light = LightReciever.Light * ambient;
 
         while (screen.isRunning()) {
             glfwPollEvents();
@@ -126,16 +122,19 @@ int main()
                     cam.RotateCamera(screen);
 
                     //trans.GetRot()->y = sin(glfwGetTime() * (M_PI / 180)) * 100;
-                    lightSource.transform.GetPos()->z = -2;
-                    lightSource.transform.GetPos()->x = 10;
+                    LightReciever.transform.GetPos()->z = -2;
+                    LightReciever.transform.GetPos()->x = 10;
 
-                    LightReciever.transform.GetPos()->z = -2 + sin(glfwGetTime() * (M_PI / 180) * 100) * 10;
-                    LightReciever.transform.GetPos()->x = 10 + cos(glfwGetTime() * (M_PI / 180) * 100) * 10;
+                    lightSource.transform.GetPos()->z = -2 + sin(glfwGetTime() * (M_PI / 180) * 100) * 10;
+                    lightSource.transform.GetPos()->x = 10 + cos(glfwGetTime() * (M_PI / 180) * 100) * 10;
 
-                    LS.Update(lightSource.transform, cam);
-                    lightSource.Draw(LS.shaderProgram);
+                    LR.Use();
                     LR.Update(LightReciever.transform, cam);
                     LightReciever.Draw(LR.shaderProgram);
+
+                    LS.Use();
+                    LS.Update(lightSource.transform, cam);
+                    lightSource.Draw(LS.shaderProgram);
                     screen.Update();
 
                     counter++;
