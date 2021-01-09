@@ -106,8 +106,8 @@ int main()
          };
         Texture tt(&logger, "container.jpg");
         Texture tt2(&logger);
-        LightSource lightSource(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), tt, &logger);
-        WorldObject LightReciever(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), tt2, &logger);
+        LightSource lightSource(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), tt2, &logger);
+        WorldObject LightReciever(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), tt, &logger);
         float counter = 0.0f;
         float ambient = 0.5f;
         LightReciever.Light = LightReciever.Light * ambient;
@@ -128,8 +128,9 @@ int main()
                     //trans.GetRot()->y = sin(glfwGetTime() * (M_PI / 180)) * 100;
                     lightSource.transform.GetPos()->z = -2;
                     lightSource.transform.GetPos()->x = 10;
-                    LightReciever.transform.GetPos()->z = -2;
-                    LightReciever.transform.GetPos()->x = 15;
+
+                    LightReciever.transform.GetPos()->z = -2 + sin(glfwGetTime() * (M_PI / 180) * 100) * 10;
+                    LightReciever.transform.GetPos()->x = 10 + cos(glfwGetTime() * (M_PI / 180) * 100) * 10;
 
                     LS.Update(lightSource.transform, cam);
                     lightSource.Draw(LS.shaderProgram);
