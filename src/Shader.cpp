@@ -28,6 +28,7 @@ Shader::Shader(std::string shaderName, Logger* logger) {
 	}
 	this->logger->Log("Shader Program has been compiled");
 
+
 	this->Uniforms[TRANS_UNIFROM] = glGetUniformLocation(this->shaderProgram, "transform");
 	this->Uniforms[CAMERA_UNIFORM] = glGetUniformLocation(this->shaderProgram, "camera");
 }
@@ -73,7 +74,6 @@ Shader::Shader(std::string vertexShader, std::string fragShader, Logger* logger)
 
 	this->Uniforms[TRANS_UNIFROM] = glGetUniformLocation(this->shaderProgram, "transform");
 	this->Uniforms[CAMERA_UNIFORM] = glGetUniformLocation(this->shaderProgram, "camera");
-
 }
 
 //Activates Shader

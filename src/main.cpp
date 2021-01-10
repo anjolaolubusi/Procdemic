@@ -125,16 +125,15 @@ int main()
                     LightReciever.transform.GetPos()->z = -2;
                     LightReciever.transform.GetPos()->x = 10;
 
-                    lightSource.transform.GetPos()->z = -2 + sin(glfwGetTime() * (M_PI / 180) * 100) * 10;
-                    lightSource.transform.GetPos()->x = 10 + cos(glfwGetTime() * (M_PI / 180) * 100) * 10;
+                    LightReciever.transform.GetRot()->y = sin(glfwGetTime() * (M_PI / 180)) * 100;
+    //                lightSource.transform.GetPos()->z = -2 + sin(glfwGetTime() * (M_PI / 180) * 50) * 10;
+    //                lightSource.transform.GetPos()->x = 10 + cos(glfwGetTime() * (M_PI / 180) * 50) * 10;
 
-                    LR.Use();
-                    LR.Update(LightReciever.transform, cam);
-                    LightReciever.Draw(LR.shaderProgram);
+                    lightSource.transform.GetPos()->z = -2;
+                    lightSource.transform.GetPos()->x = 20;
 
-                    LS.Use();
-                    LS.Update(lightSource.transform, cam);
-                    lightSource.Draw(LS.shaderProgram);
+                    LightReciever.Draw(&LR, cam, lightSource);
+                    lightSource.Draw(&LS, cam);
                     screen.Update();
 
                     counter++;

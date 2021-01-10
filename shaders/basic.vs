@@ -8,11 +8,12 @@ out vec3 Normal;
 
 uniform mat4 transform;
 uniform mat4 camera;
+uniform mat4 normalMatrix;
 
 void main()
 {
     gl_Position = camera * transform * vec4(aPos, 1.0);
     texCoord = aTexCoord;
-    Normal = aNormal;
+    Normal = mat3(normalMatrix) * aNormal;
 }
 

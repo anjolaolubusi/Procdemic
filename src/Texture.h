@@ -8,7 +8,6 @@
 
 class Texture {
 public:
-	Texture();
 	Texture(const Texture& texture);
 	Texture(Logger* logger, std::string filename="default.jpg");
 	void Draw(unsigned int unit);

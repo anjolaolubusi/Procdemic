@@ -19,7 +19,7 @@ struct Vertex{
     Vertex(glm::vec3 pos, glm::vec2 tex, glm::vec3 norm) {
         this->pos = pos;
         this->tex = tex;
-        this->norm = norm;
+        this->norm = glm::normalize(norm);
     }
 
 };

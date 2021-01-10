@@ -36,6 +36,15 @@ Mesh::Mesh(Vertex* vert, size_t NumberOfVertices, unsigned int* indices, unsigne
 				this->logger->Log("Binding Indices Buffer Array");
 				glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(indices[0]), &indices[0], GL_STATIC_DRAW);
 				break;
+			case NORMAL:
+				glBindBuffer(GL_ARRAY_BUFFER, this->VBO[NORMAL]);
+				this->logger->Log("Binding Normals Buffer Array");
+				glBufferData(GL_ARRAY_BUFFER, NumberOfVertices * sizeof(vert[0]), &vert[0], GL_STATIC_DRAW);
+				this->logger->Log("Sending Normals Data To Array");
+				glVertexAttribPointer(2, 3, GL_FLOAT, GL_TRUE, sizeof(vert[0]), (void*)(sizeof(glm::vec3) + sizeof(glm::vec2) ));
+				glEnableVertexAttribArray(2);
+				this->logger->Log("Normal Data Bounds Are Determined");
+				break;
 		}
 	}
 
