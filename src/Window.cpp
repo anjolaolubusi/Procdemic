@@ -73,8 +73,10 @@ void Window::Resize(GLFWwindow* window, int width, int height) {
 
 void Window::UpdateSysStats(double frametime, double fps)
 {
+    double width, height;
+    glfwGetCursorPos(this->window, &width, &height);
     std::string new_title = this->title;
-    new_title += " Frametime: " + std::to_string(frametime) + " FPS: " + std::to_string(fps);
+    new_title += " Frametime: " + std::to_string(frametime) + " FPS: " + std::to_string(fps) + " CUR_X: " + std::to_string(width) + " CUR_Y: " + std::to_string(height);
     glfwSetWindowTitle(this->window, new_title.c_str());
 }
 

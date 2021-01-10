@@ -1,9 +1,4 @@
 #include "Texture.h"
-
-Texture::Texture() {
-
-}
-
 Texture::Texture(const Texture& texture) {
 	this->logger = texture.logger;
 	this->texture_id = texture.texture_id;
@@ -20,6 +15,7 @@ Texture::Texture(Logger* logger, std::string filename) {
 	glGenTextures(1, &this->texture_id);
 	logger->Log("Generated Texture ID");
 	glBindTexture(GL_TEXTURE_2D, this->texture_id);
+	fprintf(stdout, "TEXTID for %s: %d\n", filename.c_str(), this->texture_id);
 	logger->Log("Binded Texture ID");
 	if (this->data) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

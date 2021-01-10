@@ -15,7 +15,7 @@ public:
 		this->scale = scale;
 	}
 
-	inline glm::mat4 GetModel() const
+	inline glm::mat4 GetModel()
 	{
 		glm::mat4 posMat = glm::translate(pos);
 		glm::mat4 scaleMat = glm::scale(scale);
@@ -23,8 +23,8 @@ public:
 		glm::mat4 rotY = glm::rotate(rot.y, glm::vec3(0.0, 1.0, 0.0));
 		glm::mat4 rotZ = glm::rotate(rot.z, glm::vec3(0.0, 0.0, 1.0));
 		glm::mat4 rotMat = rotX * rotY * rotZ;
-
-		return posMat * rotMat * scaleMat;
+		model = posMat * rotMat * scaleMat;
+		return model;
 	}
 
 	inline glm::vec3* GetPos() { return &pos; }
@@ -38,6 +38,7 @@ public:
 	glm::vec3 pos;
 	glm::vec3 rot;
 	glm::vec3 scale;
+	glm::mat4 model;
 };
 
 #endif

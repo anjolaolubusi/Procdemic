@@ -28,6 +28,50 @@ Shader::Shader(std::string shaderName, Logger* logger) {
 	}
 	this->logger->Log("Shader Program has been compiled");
 
+
+	this->Uniforms[TRANS_UNIFROM] = glGetUniformLocation(this->shaderProgram, "transform");
+	this->Uniforms[CAMERA_UNIFORM] = glGetUniformLocation(this->shaderProgram, "camera");
+}
+
+Shader::Shader(std::string vertexShader, std::string fragShader, Logger* logger) {
+	this->logger = logger;
+	this->shaderProgram = glCreateProgram();
+	for (int i = 0; i < NUM_OF_SHADERS; i++) {
+		if (i == 0) {
+			this->ShaderName = vertexShader;
+#ifdef _WIN32
+			this->fileDir = "shaders\\" + vertexShader;
+#else
+			this->fileDir = "shaders/" + vertexShader;
+#endif
+			LoadShaderFile(i);
+			glAttachShader(this->shaderProgram, this->Shaders[i]);
+		}
+		else {
+			this->ShaderName = vertexShader;
+#ifdef _WIN32
+			this->fileDir = "shaders\\" + fragShader;
+#else
+			this->fileDir = "shaders/" + fragShader;
+#endif
+			LoadShaderFile(i);
+			glAttachShader(this->shaderProgram, this->Shaders[i]);
+		}
+	}
+	glLinkProgram(this->shaderProgram);
+	int success;
+	char infoLog[512];
+	glGetProgramiv(this->shaderProgram, GL_LINK_STATUS, &success);
+	if (!success) {
+		int tt;
+		glGetProgramInfoLog(this->shaderProgram, sizeof(infoLog), &tt, infoLog);
+		error_string = infoLog;
+		this->logger->Log("Shader Program Linking Failed", true);
+		this->logger->Log(error_string.c_str(), true);
+		throw error_string.c_str();
+	}
+	this->logger->Log("Shader Program has been compiled");
+
 	this->Uniforms[TRANS_UNIFROM] = glGetUniformLocation(this->shaderProgram, "transform");
 	this->Uniforms[CAMERA_UNIFORM] = glGetUniformLocation(this->shaderProgram, "camera");
 }
@@ -83,7 +127,7 @@ void Shader::LoadShaderFile(int ShaderType){
 }
 
 //Updates varibles in the Vertex shader
-void Shader::Update(Transform transform, Camera camera){
+void Shader::Update(Transform& transform, Camera& camera){
 	glUniformMatrix4fv(this->Uniforms[TRANS_UNIFROM], 1, false, &transform.GetModel()[0][0]);
 	glUniformMatrix4fv(this->Uniforms[CAMERA_UNIFORM], 1, false, &camera.cameraMatrix()[0][0]);
 }

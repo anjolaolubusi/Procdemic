@@ -12,8 +12,9 @@ class Shader
 {
 public: 
 	Shader(std::string shaderName, Logger* logger);
+	Shader(std::string vertexShader, std::string fragShader, Logger* logger);
 	void Use();
-	void Update(Transform transform, Camera camera);
+	void Update(Transform& transform, Camera& camera);
 	~Shader();
 	void LoadShaderFile(int ShaderType);
 

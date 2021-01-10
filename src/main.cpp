@@ -10,15 +10,33 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "Camera.h"
-#include "Object.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include "Objects.h"
 
 #define FPS 60
 Logger logger;
+Camera cam;
+Window screen(800, 600, "Test", &logger);
+
+//Test
 
 void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
+    if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+        screen.isPaused = !screen.isPaused;
+        glfwGetCursorPos(window, &cam.oldX, &cam.oldY);
+        if (screen.isPaused) {
+            screen.hasBeenPaused = true;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+        else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+    }
+
 }
 
 //Error handeller
@@ -30,23 +48,65 @@ void ErrorCallback(int error, const char* description) {
 int main()
 {
     try {
-        Window screen(800, 600, "Test", &logger);
         glfwSetKeyCallback(screen.window, Input);
         glfwSetErrorCallback(ErrorCallback);
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
-        Shader ss("basic", &logger);
         Vertex vert[] = {
-        Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)),
-        Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)),
-        Vertex(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.5f, 1.0f)),
+        Vertex(glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)), //0
+        Vertex(glm::vec3(1.0f, 1.0f, -1.0), glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)),
+        Vertex(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 0.0f, -1.0f)),
+        Vertex(glm::vec3(1.0f, -1.0f, -1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 0.0f, -1.0f)), //3
+
+        Vertex(glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f)), //4
+        Vertex(glm::vec3(-1.0f, 1.0f, 1.0), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f)),
+        Vertex(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)),
+        Vertex(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)), //7
+
+        Vertex(glm::vec3(1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)), //8
+        Vertex(glm::vec3(1.0f, 1.0f, 1.0), glm::vec2(1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)),
+        Vertex(glm::vec3(1.0f, -1.0f, -1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)) ,
+        Vertex(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)), //11
+
+        Vertex(glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)), //12
+        Vertex(glm::vec3(1.0f, 1.0f, 1.0), glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+        Vertex(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+        Vertex(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f)), //15
+
+        Vertex(glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)), //16
+        Vertex(glm::vec3(1.0f, 1.0f, -1.0), glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+        Vertex(glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+        Vertex(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), //19
+
+        Vertex(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)), //20
+        Vertex(glm::vec3(1.0f, -1.0f, -1.0), glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+        Vertex(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+        Vertex(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)), //23
         };
-        Texture tt(&logger, "container.jpg");
-        Mesh mm(vert, sizeof(vert)/sizeof(vert[0]), &logger);
-        Object obj(Mesh(vert, sizeof(vert) / sizeof(vert[0]), &logger), Texture(&logger, "container.jpg"));
-        Transform trans;
+        unsigned int indices[] = 
+        {0, 2, 3, 
+         0, 1, 3, 
+
+        4, 6, 7,
+        4, 5, 7,
+
+        8, 10, 11,
+        8, 9, 11,
+
+        12, 14, 15,
+        12, 13, 15,
+
+        16, 18, 19,
+        16, 17, 19,
+
+        20, 22, 23,
+        20, 21, 23,
+         };
+        LightSource lightSource(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), "default.jpg", &logger);
+        WorldObject LightReciever(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), "container.jpg", &logger);
+        Shader LS("lightsource", &logger);
+        Shader LR("basic", &logger);
         float counter = 0.0f;
-        Camera cam;
 
         while (screen.isRunning()) {
             glfwPollEvents();
@@ -54,33 +114,30 @@ int main()
             deltaTime = nowTime - lastTime;
             if (1 / deltaTime < FPS) {
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime);
-                glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
-                glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+                if (!screen.isPaused) {
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                    glClearColor(0.4f, 0.2f, 0.6f, 1.0f);
 
-                cam.MoveCamera(screen.window);
-                cam.RotateCamera(screen.window);
+                    cam.MoveCamera(screen);
+                    cam.RotateCamera(screen);
 
-                trans.GetRot()->y = sin(counter);
-                trans.GetPos()->z = -2;
+                    //trans.GetRot()->y = sin(glfwGetTime() * (M_PI / 180)) * 100;
+                    LightReciever.transform.GetPos()->z = -2;
+                    LightReciever.transform.GetPos()->x = 10;
 
-                obj.transform.GetPos()->z = -2;
-                obj.transform.GetPos()->x = 1;
+                    LightReciever.transform.GetRot()->y = sin(glfwGetTime() * (M_PI / 180)) * 100;
+    //                lightSource.transform.GetPos()->z = -2 + sin(glfwGetTime() * (M_PI / 180) * 50) * 10;
+    //                lightSource.transform.GetPos()->x = 10 + cos(glfwGetTime() * (M_PI / 180) * 50) * 10;
 
-                for (int i = 0; i < 2; i++) {
-                    if (i == 0) {
-                        ss.Update(trans, cam);
-                        mm.Draw(ss.shaderProgram);
-                    }
-                    else {
-                        ss.Update(obj.transform, cam);
-                        obj.Draw(ss.shaderProgram);
-                    }
+                    lightSource.transform.GetPos()->z = -2;
+                    lightSource.transform.GetPos()->x = 20;
+
+                    LightReciever.Draw(&LR, cam, lightSource);
+                    lightSource.Draw(&LS, cam);
+                    screen.Update();
+
+                    counter++;
                 }
-                tt.Draw(0);
-                
-                counter += 0.1f;
-
-                screen.Update();
                 lastTime = glfwGetTime();
             }
             else {
