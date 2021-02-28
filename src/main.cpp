@@ -14,12 +14,10 @@
 #include <math.h>
 #include "Objects.h"
 
-#define FPS 60
+#define FPS 120
 Logger logger;
 Camera cam;
 Window screen(800, 600, "Test", &logger);
-
-//Test
 
 void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -103,10 +101,11 @@ int main()
         20, 21, 23,
          };
         LightSource lightSource(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), "default.jpg", &logger);
-        WorldObject LightReciever(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), "container.jpg", &logger);
         Shader LS("lightsource", &logger);
         Shader LR("basic", &logger);
-        float counter = 0.0f;
+        WorldObjectManager WOM(&logger);
+        WOM.Add(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), "container.jpg", &lightSource, &logger);
+
 
         while (screen.isRunning()) {
             glfwPollEvents();
@@ -121,22 +120,14 @@ int main()
                     cam.MoveCamera(screen);
                     cam.RotateCamera(screen);
 
-                    //trans.GetRot()->y = sin(glfwGetTime() * (M_PI / 180)) * 100;
-                    LightReciever.transform.GetPos()->z = -2;
-                    LightReciever.transform.GetPos()->x = 10;
-
-                    LightReciever.transform.GetRot()->y = sin(glfwGetTime() * (M_PI / 180)) * 100;
-    //                lightSource.transform.GetPos()->z = -2 + sin(glfwGetTime() * (M_PI / 180) * 50) * 10;
-    //                lightSource.transform.GetPos()->x = 10 + cos(glfwGetTime() * (M_PI / 180) * 50) * 10;
-
                     lightSource.transform.GetPos()->z = -2;
                     lightSource.transform.GetPos()->x = 20;
+                    WOM.Update();
 
-                    LightReciever.Draw(&LR, cam, lightSource);
+                    WOM.Draw(&LR, cam);
                     lightSource.Draw(&LS, cam);
+                    
                     screen.Update();
-
-                    counter++;
                 }
                 lastTime = glfwGetTime();
             }
