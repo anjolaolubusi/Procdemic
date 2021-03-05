@@ -51,12 +51,13 @@ struct Texture {
 	void ClearGPUMemory() {
 		glActiveTexture(GL_TEXTURE0);
 		glDeleteTextures(1, &this->texture_id);
-		logger->Log("Removed Texture Data (FROM TEXTURE CLASS)");
+		logger->Log("Removed Texture Data (FROM CLEARGPUMEMORY)");
 	}
 
 	~Texture() {
-		ClearGPUMemory();
-		logger->Log("Removed Texture Data (FROM TEXTURE CLASS)");
+		glActiveTexture(GL_TEXTURE0);
+		glDeleteTextures(1, &this->texture_id);
+		logger->Log("Removed Texture Data (FROM TEXTURE DESTRUCTOR)");
 	}
 
 	Logger* logger;

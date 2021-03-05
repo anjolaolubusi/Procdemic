@@ -50,63 +50,15 @@ int main()
         glfwSetErrorCallback(ErrorCallback);
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
-        Vertex vert[] = {
-        Vertex(glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)), //0
-        Vertex(glm::vec3(1.0f, 1.0f, -1.0), glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)),
-        Vertex(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 0.0f, -1.0f)),
-        Vertex(glm::vec3(1.0f, -1.0f, -1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 0.0f, -1.0f)), //3
-
-        Vertex(glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f)), //4
-        Vertex(glm::vec3(-1.0f, 1.0f, 1.0), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f)),
-        Vertex(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)),
-        Vertex(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)), //7
-
-        Vertex(glm::vec3(1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)), //8
-        Vertex(glm::vec3(1.0f, 1.0f, 1.0), glm::vec2(1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)),
-        Vertex(glm::vec3(1.0f, -1.0f, -1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)) ,
-        Vertex(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)), //11
-
-        Vertex(glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)), //12
-        Vertex(glm::vec3(1.0f, 1.0f, 1.0), glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
-        Vertex(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
-        Vertex(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f)), //15
-
-        Vertex(glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)), //16
-        Vertex(glm::vec3(1.0f, 1.0f, -1.0), glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
-        Vertex(glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
-        Vertex(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), //19
-
-        Vertex(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)), //20
-        Vertex(glm::vec3(1.0f, -1.0f, -1.0), glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
-        Vertex(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
-        Vertex(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)), //23
-        };
-        unsigned int indices[] = 
-        {0, 2, 3, 
-         0, 1, 3, 
-
-        4, 6, 7,
-        4, 5, 7,
-
-        8, 10, 11,
-        8, 9, 11,
-
-        12, 14, 15,
-        12, 13, 15,
-
-        16, 18, 19,
-        16, 17, 19,
-
-        20, 22, 23,
-        20, 21, 23,
-         };
-        LightSource lightSource(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), "default.jpg", &logger);
-        Shader LS("lightsource", &logger);
-        Shader LR("basic", &logger);
+        VertexManager vMan;
+        vMan.Add(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f));
+        vMan.Add(glm::vec3(-1.0f, 1.0f, 1.0), glm::vec2(0.0f, 1.0f));
+        vMan.Add(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec2(0.0f, 0.0f));
+        vMan.Add(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 0.0f));
         WorldObjectManager WOM(&logger);
-        WOM.Add(vert, sizeof(vert) / sizeof(vert[0]), indices, sizeof(indices) / sizeof(indices[0]), "container.jpg", &lightSource, &logger);
-
-
+        unsigned int indices[] = {2, 1, 0 };
+        WOM.Add(vMan, vMan.total_num, indices, sizeof(indices) / sizeof(indices[0]), "container.jpg", &logger);
+        Shader currShader("lightsource", &logger);
         while (screen.isRunning()) {
             glfwPollEvents();
             nowTime = glfwGetTime();
@@ -120,13 +72,8 @@ int main()
                     cam.MoveCamera(screen);
                     cam.RotateCamera(screen);
 
-                    lightSource.transform.GetPos()->z = -2;
-                    lightSource.transform.GetPos()->x = 20;
                     WOM.Update();
-
-                    WOM.Draw(&LR, cam);
-                    lightSource.Draw(&LS, cam);
-                    
+                    WOM.Draw(&currShader, cam);                    
                     screen.Update();
                 }
                 lastTime = glfwGetTime();
