@@ -43,7 +43,7 @@ public:
 
 	void Update() {
 		for (int i = 0; i < total_num; i++) {
-			trans_list.at(i).GetPos()->z = -2;
+			trans_list.at(i).GetPos()->z = -7;
 		}
 	}
 

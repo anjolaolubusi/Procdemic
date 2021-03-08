@@ -38,7 +38,7 @@ struct Mesh
 				glBindBuffer(GL_ARRAY_BUFFER, this->VBO[TEXTURES]);
 				this->logger->Log("Binding Vertex Buffer Array");
 				printf("OPENGL ERROR for Binding Vertex Buffer: %i\n", glGetError());
-				glBufferData(GL_ARRAY_BUFFER, NumberOfVertices * sizeof(GLfloat), vertManage.tex_list.data(), GL_STATIC_DRAW);
+				glBufferData(GL_ARRAY_BUFFER, NumberOfVertices * sizeof(glm::vec2), vertManage.tex_list.data(), GL_STATIC_DRAW);
 				this->logger->Log("Sending Vertex Data To Array");
 				printf("OPENGL ERROR for Sending Vertex Data: %i\n", glGetError());
 				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(0));

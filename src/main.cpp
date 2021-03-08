@@ -51,12 +51,12 @@ int main()
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
         VertexManager vMan;
-        vMan.Add(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f));
-        vMan.Add(glm::vec3(-1.0f, 1.0f, 1.0), glm::vec2(0.0f, 1.0f));
-        vMan.Add(glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec2(0.0f, 0.0f));
-        vMan.Add(glm::vec3(1.0f, -1.0f, 1.0f), glm::vec2(1.0f, 0.0f));
+        vMan.Add(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f));
+        vMan.Add(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f));
+        vMan.Add(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f));
+        vMan.Add(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f));
         WorldObjectManager WOM(&logger);
-        unsigned int indices[] = {2, 1, 0 };
+        unsigned int indices[] = {0, 1, 3, 1, 2, 3};
         WOM.Add(vMan, vMan.total_num, indices, sizeof(indices) / sizeof(indices[0]), "container.jpg", &logger);
         Shader currShader("lightsource", &logger);
         while (screen.isRunning()) {
