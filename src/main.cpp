@@ -58,7 +58,7 @@ int main()
         WorldObjectManager WOM(&logger);
         unsigned int indices[] = {0, 1, 3, 1, 2, 3};
         WOM.Add(vMan, vMan.total_num, indices, sizeof(indices) / sizeof(indices[0]), "container.jpg", &logger);
-        Shader currShader("lightsource", &logger);
+        Shader currShader("basic", &logger);
         while (screen.isRunning()) {
             glfwPollEvents();
             nowTime = glfwGetTime();
