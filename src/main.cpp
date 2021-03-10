@@ -13,6 +13,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Objects.h"
+#include "ProcGen.h"
 
 #define FPS 120
 Logger logger;
@@ -51,13 +52,13 @@ int main()
         double lastTime = glfwGetTime();
         double nowTime, deltaTime = 0;
         VertexManager vMan;
-        vMan.Add(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f));
-        vMan.Add(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f));
-        vMan.Add(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f));
-        vMan.Add(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f));
+        ProcGen procGen;
+        procGen.xNum = 20;
+        procGen.zNum = 20;
+        procGen.AddTriangles(vMan);
         WorldObjectManager WOM(&logger);
-        unsigned int indices[] = {0, 1, 3, 1, 2, 3};
-        WOM.Add(vMan, vMan.total_num, indices, sizeof(indices) / sizeof(indices[0]), "container.jpg", &logger);
+        vMan.SetIncides();
+        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container.jpg", &logger);
         Shader currShader("basic", &logger);
         while (screen.isRunning()) {
             glfwPollEvents();
@@ -67,7 +68,7 @@ int main()
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime);
                 if (!screen.isPaused) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                    glClearColor(0.4f, 0.2f, 0.6f, 1.0f);
+                    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
                     cam.MoveCamera(screen);
                     cam.RotateCamera(screen);
