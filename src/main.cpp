@@ -74,7 +74,7 @@ int main()
                     cam.RotateCamera(screen);
 
                     WOM.Update();
-                    WOM.Draw(&currShader, cam);                    
+                    WOM.Draw(&currShader, cam);
                     screen.Update();
                 }
                 lastTime = glfwGetTime();
@@ -90,7 +90,7 @@ int main()
 
         screen.CloseAllGLFW();
     }catch(const char* msg){
-
+        return -1;
     }
 
     return 0;

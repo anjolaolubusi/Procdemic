@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "VertexManager.h"	
+#include "VertexManager.h"
 #include <time.h>
 #include <stdlib.h>
 
@@ -11,7 +11,7 @@ struct ProcGen{
 	//Variable: heightMap, colourMap
 	int xNum;
 	int zNum;
-	
+
 	void AddTriangles(VertexManager& vMan){
 		for (float x = 0; x < xNum; x++) {
 			for (float z = 0; z < zNum; z++) {

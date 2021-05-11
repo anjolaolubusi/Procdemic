@@ -10,12 +10,12 @@ struct VertexManager {
 	int total_num;
 	std::vector<unsigned int> indices;
 
-	void Add(glm::vec3& pos, glm::vec2& tex) {
+	void Add(glm::vec3 pos, glm::vec2 tex) {
 		pos_list.push_back(pos);
 		tex_list.push_back(tex);
 		total_num = pos_list.size();
 	}
-	
+
 	void SetIncides(){
 		for (int i = 0; i < total_num; i = i + 4) {
 			indices.push_back(i);

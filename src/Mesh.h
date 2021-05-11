@@ -68,14 +68,18 @@ struct Mesh
 		glDrawElements(GL_TRIANGLES, NumOfIndices, GL_UNSIGNED_INT, 0);
 		CheckForOpenGLError();
 	}
-    
+
 	unsigned int NumOfIndices;
-	
+
 	void CheckForOpenGLError() {
-		if (glGetError() != 0) {
-			std::string err_msg = "OPENGL ERROR: " + std::to_string(glGetError());
-			logger->Log(err_msg.c_str(), true);
-		}
+	    try{
+            if (glGetError() != 0) {
+                std::string err_msg = "OPENGL ERROR: " + std::to_string(glGetError());
+                throw err_msg.c_str();
+            }
+	    }catch(const char* msg){
+            logger->Log(msg, true);
+	    }
 	}
 
 	void ClearGPUMemory() {
