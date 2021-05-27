@@ -72,16 +72,16 @@ public:
 		this->logger = logger;
 	}
 
-	void Draw(Shader* shader, Camera& cam, TextureManager& textManager) {
+	void Draw(Shader* shader, Camera& cam, TextureManager& textManager, Transform& lightPos) {
 		shader->Use();
 		for (int i = 0; i < total_num; i++) {
             textManager.Draw(texture_use);
 			shader->setMat4("transform", trans_list.at(i).GetModel());
 			shader->setMat4("camera", cam.cameraMatrix());
-			shader->setVec3("lightPos", cam.cameraPos);
+			shader->setVec3("lightPos", lightPos.pos);
             shader->setVec3("lightColour", 1, 1, 1);
             shader->setMat4("inv_model", glm::transpose(glm::inverse(trans_list.at(i).GetModel())));
-            shader->setVec3("viewPos", cam.cameraPos);
+            shader->setVec3("viewPos", lightPos.pos);
 			mesh_list.at(i)->Draw(shader->shaderProgram);
 		}
 	}
@@ -97,6 +97,10 @@ public:
 	void Update() {
 		for (int i = 0; i < total_num; i++) {
 			trans_list.at(i).GetPos()->z = -7;
+			trans_list.at(i).GetPos()->y = 2;
+			trans_list.at(i).GetScale()->x = 50;
+			trans_list.at(i).GetScale()->z = 30;
+
 		}
 	}
 

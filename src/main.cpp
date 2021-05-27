@@ -74,7 +74,7 @@ int main()
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime, cam.cameraPos.x, cam.cameraPos.y, cam.cameraPos.z);
                 if (!screen.isPaused) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+                    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
                     cam.MoveCamera(screen);
                     cam.RotateCamera(screen);
@@ -82,7 +82,7 @@ int main()
                     WOM.Update();
                     LOM.Update();
                     LOM.Draw(&basicShader, cam, textureManager);
-                    WOM.Draw(&currShader, cam, textureManager);
+                    WOM.Draw(&currShader, cam, textureManager, LOM.trans_list.back());
                     screen.Update();
                 }
                 lastTime = glfwGetTime();
