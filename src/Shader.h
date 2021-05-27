@@ -37,10 +37,6 @@ struct Shader
                 throw error_string.c_str();
             }
             this->logger->Log("Shader Program has been compiled");
-
-
-            this->Uniforms[TRANS_UNIFROM] = glGetUniformLocation(this->shaderProgram, "transform");
-            this->Uniforms[CAMERA_UNIFORM] = glGetUniformLocation(this->shaderProgram, "camera");
 		}catch(const char* msg){
             this->logger->Log(msg, true);
 		}
@@ -86,8 +82,6 @@ struct Shader
             }
             this->logger->Log("Shader Program has been compiled");
 
-            this->Uniforms[TRANS_UNIFROM] = glGetUniformLocation(this->shaderProgram, "transform");
-            this->Uniforms[CAMERA_UNIFORM] = glGetUniformLocation(this->shaderProgram, "camera");
 		}catch(const char* msg){
             this->logger->Log(msg, true);
 		}
@@ -95,11 +89,6 @@ struct Shader
 
 	void Use() {
 		glUseProgram(this->shaderProgram);
-	}
-
-	void Update(Transform& transform, Camera& camera) {
-		glUniformMatrix4fv(this->Uniforms[TRANS_UNIFROM], 1, false, &transform.GetModel()[0][0]);
-		glUniformMatrix4fv(this->Uniforms[CAMERA_UNIFORM], 1, false, &camera.cameraMatrix()[0][0]);
 	}
 
 	~Shader() {
@@ -160,11 +149,65 @@ struct Shader
 		}
 	}
 
+    void setBool(const std::string &name, bool value) const{
+        glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), (int)value);
+    }
+    // ------------------------------------------------------------------------
+    void setInt(const std::string &name, int value) const
+    {
+        glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), value);
+    }
+    // ------------------------------------------------------------------------
+    void setFloat(const std::string &name, float value) const
+    {
+        glUniform1f(glGetUniformLocation(shaderProgram, name.c_str()), value);
+    }
+    // ------------------------------------------------------------------------
+    void setVec2(const std::string &name, const glm::vec2 &value) const
+    {
+        glUniform2fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, &value[0]);
+    }
+    void setVec2(const std::string &name, float x, float y) const
+    {
+        glUniform2f(glGetUniformLocation(shaderProgram, name.c_str()), x, y);
+    }
+    // ------------------------------------------------------------------------
+    void setVec3(const std::string &name, const glm::vec3 &value) const
+    {
+        glUniform3fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, &value[0]);
+    }
+    void setVec3(const std::string &name, float x, float y, float z) const
+    {
+        glUniform3f(glGetUniformLocation(shaderProgram, name.c_str()), x, y, z);
+    }
+    // ------------------------------------------------------------------------
+    void setVec4(const std::string &name, const glm::vec4 &value) const
+    {
+        glUniform4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, &value[0]);
+    }
+    void setVec4(const std::string &name, float x, float y, float z, float w)
+    {
+        glUniform4f(glGetUniformLocation(shaderProgram, name.c_str()), x, y, z, w);
+    }
+    // ------------------------------------------------------------------------
+    void setMat2(const std::string &name, const glm::mat2 &mat) const
+    {
+        glUniformMatrix2fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    }
+    // ------------------------------------------------------------------------
+    void setMat3(const std::string &name, const glm::mat3 &mat) const
+    {
+        glUniformMatrix3fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    }
+    // ------------------------------------------------------------------------
+    void setMat4(const std::string &name, const glm::mat4 &mat) const
+    {
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    }
+
 	Logger* logger;
 	enum ListOfShaders{VERTSHADER, FRAGSHADER, NUM_OF_SHADERS};
-	enum ListOfUnifroms{TRANS_UNIFROM, CAMERA_UNIFORM, NUM_OF_UNIFROMS};
 	unsigned int Shaders[NUM_OF_SHADERS];
-	unsigned int Uniforms[NUM_OF_UNIFROMS];
 	std::string ShaderFiles[NUM_OF_SHADERS];
 	std::string ShaderName;
 	std::string fileDir;

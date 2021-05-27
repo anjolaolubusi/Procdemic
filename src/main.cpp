@@ -57,24 +57,32 @@ int main()
         procGen.zNum = 20;
         procGen.AddTriangles(vMan);
         WorldObjectManager WOM(&logger);
+        LightObjectManager LOM(&logger);
+        TextureManager textureManager(&logger);
+        textureManager.AddTexture("default.jpg");
+        textureManager.AddTexture("container.jpg");
         vMan.SetIncides();
+        LOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "default.jpg", &logger);
         WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container.jpg", &logger);
-        Shader currShader("basic", &logger);
+        Shader currShader("light-test", &logger);
+        Shader basicShader("basic", &logger);
         while (screen.isRunning()) {
             glfwPollEvents();
             nowTime = glfwGetTime();
             deltaTime = nowTime - lastTime;
             if (1 / deltaTime < FPS) {
-                screen.UpdateSysStats(deltaTime, 1 / deltaTime);
+                screen.UpdateSysStats(deltaTime, 1 / deltaTime, cam.cameraPos.x, cam.cameraPos.y, cam.cameraPos.z);
                 if (!screen.isPaused) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+                    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 
                     cam.MoveCamera(screen);
                     cam.RotateCamera(screen);
 
                     WOM.Update();
-                    WOM.Draw(&currShader, cam);
+                    LOM.Update();
+                    LOM.Draw(&basicShader, cam, textureManager);
+                    WOM.Draw(&currShader, cam, textureManager);
                     screen.Update();
                 }
                 lastTime = glfwGetTime();

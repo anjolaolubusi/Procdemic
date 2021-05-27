@@ -5,27 +5,35 @@
 #include <GLFW/glfw3.h>
 #include "Logger.h"
 #include <stb_image/stb_image.h>
+#include <string>
+#include <vector>
 
-struct Texture {
-	Texture(const Texture& texture) {
-		this->logger = texture.logger;
-		this->texture_id = texture.texture_id;
-	}
+struct TextureManager{
+public:
+    Logger* logger;
+    std::vector<unsigned int> ListOfTextureId;
+    std::vector<std::string> ListOfTextureNames;
+    std::vector<unsigned int> ListOfActivatedTexture;
 
-	Texture(Logger* logger, std::string filename="default.jpg") {
-	    try{
+    TextureManager(Logger* logger){
+        this->logger = logger;
+    }
+
+    void AddTexture(std::string filename="default.jpg"){
+        ListOfTextureId.push_back(-1);
+        try{
             const char* file = filename.c_str();
             int width, height, nrChannels;
             this->logger = logger;
-            this->data = stbi_load(file, &width, &height, &nrChannels, 0);
+            unsigned char* data = stbi_load(file, &width, &height, &nrChannels, 0);
             logger->Log("Image Loaded");
 
-            glGenTextures(1, &this->texture_id);
+            glGenTextures(1, &ListOfTextureId.back());
             logger->Log("Generated Texture ID");
-            glBindTexture(GL_TEXTURE_2D, this->texture_id);
-            fprintf(stdout, "TEXTID for %s: %d\n", filename.c_str(), this->texture_id);
+            glBindTexture(GL_TEXTURE_2D, ListOfTextureId.back());
+            fprintf(stdout, "TEXTID for %s: %d\n", filename.c_str(), ListOfTextureId.back());
             logger->Log("Binded Texture ID");
-            if (this->data) {
+            if (data) {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
                 glGenerateMipmap(GL_TEXTURE_2D);
                 logger->Log("Generated Mipmap");
@@ -34,42 +42,40 @@ struct Texture {
                 logger->Log("Failed to load texture", true);
                 throw "Failed to load texture";
             }
-            stbi_image_free(this->data);
+            stbi_image_free(data);
             this->logger->Log("Removed Image Data");
+            ListOfTextureNames.push_back(filename);
 	    }catch(const char* msg){
             this->logger->Log(msg, true);
 		}
-	}
+    }
 
-	void Draw(unsigned int unit) {
-	    try{
-            if (unit < 0 || unit > 31) {
-                logger->Log("Unit is outside of acceptable range", true);
-                throw "Unit is outside of acceptable range";
+    void Draw(std::string filename){
+        for(int i=0; i < ListOfTextureNames.size(); i++){
+            if(ListOfTextureNames[i] == filename){
+                fprintf(stdout, "Calling for %s with TexID: %d\n", filename.c_str(), ListOfTextureId[i]);
+                glActiveTexture(ListOfTextureId[i]);
+                glBindTexture(GL_TEXTURE_2D, ListOfTextureId[i]);
             }
+        }
+    }
 
-            glActiveTexture(GL_TEXTURE0 + unit);
-            glBindTexture(GL_TEXTURE_2D, this->texture_id);
-	    }catch(const char* msg){
-            this->logger->Log(msg, true);
-		}
+    int GetTextureId(std::string filename){
+        for(int i=0; i < ListOfTextureNames.size(); i++){
+            if(ListOfTextureNames[i] == filename){
+                    return ListOfTextureId[i];
+            }
+        }
+        return -1;
+    }
+
+    ~TextureManager() {
+        for(int i=0; i < ListOfTextureNames.size(); i++){
+            glActiveTexture(GL_TEXTURE0 + ListOfTextureId[i]);
+            glDeleteTextures(1, &ListOfTextureId[i]);
+            logger->Log("Removed Texture Data (FROM CLEARGPUMEMORY)");
+        }
 	}
-
-	void ClearGPUMemory() {
-		glActiveTexture(GL_TEXTURE0);
-		glDeleteTextures(1, &this->texture_id);
-		logger->Log("Removed Texture Data (FROM CLEARGPUMEMORY)");
-	}
-
-	~Texture() {
-		glActiveTexture(GL_TEXTURE0);
-		glDeleteTextures(1, &this->texture_id);
-		logger->Log("Removed Texture Data (FROM TEXTURE DESTRUCTOR)");
-	}
-
-	Logger* logger;
-	unsigned char* data;
-	unsigned int texture_id;
 };
 
 #endif

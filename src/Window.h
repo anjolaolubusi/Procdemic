@@ -87,11 +87,12 @@ struct Window
             glViewport(0, 0, width, height);
         }
 
-        void UpdateSysStats(double frametime, double fps) {
+        void UpdateSysStats(double frametime, double fps, float x, float y, float z) {
             double width, height;
             glfwGetCursorPos(this->window, &width, &height);
             std::string new_title = this->title;
-            new_title += " Frametime: " + std::to_string(frametime) + " FPS: " + std::to_string(fps) + " CUR_X: " + std::to_string(width) + " CUR_Y: " + std::to_string(height);
+            new_title += " Frametime: " + std::to_string(frametime) + " FPS: " + std::to_string(fps)
+            + " X: " + std::to_string(x) + " Y: " + std::to_string(y) + " Z: " + std::to_string(z);
             glfwSetWindowTitle(this->window, new_title.c_str());
         }
 

@@ -49,6 +49,17 @@ struct Mesh
 				glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(indices[0]), &indices[0], GL_STATIC_DRAW);
 				CheckForOpenGLError();
 				break;
+            case NORMAL:
+                glBindBuffer(GL_ARRAY_BUFFER, this->VBO[NORMAL]);
+				this->logger->Log("Binding Normal Buffer Array");
+				glBufferData(GL_ARRAY_BUFFER, NumberOfVertices * sizeof(glm::vec3), vertManage.normal_list.data(), GL_STATIC_DRAW);
+				CheckForOpenGLError();
+				this->logger->Log("Sending Normal Data To Array");
+				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)(0));
+				CheckForOpenGLError();
+				glEnableVertexAttribArray(2);
+				this->logger->Log("Normal Data Bounds Are Determined");
+				break;
 			}
 		}
 
@@ -60,7 +71,7 @@ struct Mesh
 
 	Logger* logger;
     unsigned int VAO;
-    enum BUFFERS{POS, TEXTURES, INDEX, NUM_BUFFERS};
+    enum BUFFERS{POS, TEXTURES, INDEX, NORMAL, NUM_BUFFERS};
     unsigned int VBO[NUM_BUFFERS];
 	void Draw(unsigned int shaderProgram) {
 		glUseProgram(shaderProgram);
