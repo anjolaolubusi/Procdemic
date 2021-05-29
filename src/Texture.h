@@ -31,7 +31,6 @@ public:
             glGenTextures(1, &ListOfTextureId.back());
             logger->Log("Generated Texture ID");
             glBindTexture(GL_TEXTURE_2D, ListOfTextureId.back());
-            fprintf(stdout, "TEXTID for %s: %d\n", filename.c_str(), ListOfTextureId.back());
             logger->Log("Binded Texture ID");
             if (data) {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -53,7 +52,6 @@ public:
     void Draw(std::string filename){
         for(int i=0; i < ListOfTextureNames.size(); i++){
             if(ListOfTextureNames[i] == filename){
-                fprintf(stdout, "Calling for %s with TexID: %d\n", filename.c_str(), ListOfTextureId[i]);
                 glActiveTexture(ListOfTextureId[i]);
                 glBindTexture(GL_TEXTURE_2D, ListOfTextureId[i]);
             }

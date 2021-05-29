@@ -62,8 +62,8 @@ int main()
         textureManager.AddTexture("default.jpg");
         textureManager.AddTexture("container.jpg");
         vMan.SetIncides();
-        LOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "default.jpg", &logger);
-        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container.jpg", &logger);
+        LOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "default.jpg", glm::vec3(1, 1, 1), &logger, 1.0f, 1.0f, 1.0f);
+        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container.jpg", glm::vec3(0, 0, 1), &logger);
         Shader currShader("light-test", &logger);
         Shader basicShader("basic", &logger);
         while (screen.isRunning()) {
@@ -74,7 +74,7 @@ int main()
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime, cam.cameraPos.x, cam.cameraPos.y, cam.cameraPos.z);
                 if (!screen.isPaused) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
                     cam.MoveCamera(screen);
                     cam.RotateCamera(screen);
@@ -82,7 +82,7 @@ int main()
                     WOM.Update();
                     LOM.Update();
                     LOM.Draw(&basicShader, cam, textureManager);
-                    WOM.Draw(&currShader, cam, textureManager, LOM.trans_list.back());
+                    WOM.Draw(&currShader, cam, textureManager, LOM.trans_list.back().pos, LOM.object_color_list.back(), LOM.ambient_list.back(), LOM.diffuse_list.back(), LOM.specular_list.back());
                     screen.Update();
                 }
                 lastTime = glfwGetTime();
