@@ -13,6 +13,7 @@ public:
     Logger* logger;
     std::vector<unsigned int> ListOfTextureId;
     std::vector<std::string> ListOfTextureNames;
+    std::vector<std::string> ListOfTextureSpec;
     std::vector<unsigned int> ListOfActivatedTexture;
 
     TextureManager(Logger* logger){
@@ -21,11 +22,10 @@ public:
 
     void AddTexture(std::string filename="default.jpg"){
         ListOfTextureId.push_back(-1);
-        try{
             const char* file = filename.c_str();
             int width, height, nrChannels;
             this->logger = logger;
-            unsigned char* data = stbi_load(file, &width, &height, &nrChannels, 0);
+            unsigned char* data = stbi_load(file, &width, &height, &nrChannels, STBI_rgb);
             logger->Log("Image Loaded");
 
             glGenTextures(1, &ListOfTextureId.back());
@@ -44,15 +44,12 @@ public:
             stbi_image_free(data);
             this->logger->Log("Removed Image Data");
             ListOfTextureNames.push_back(filename);
-	    }catch(const char* msg){
-            this->logger->Log(msg, true);
-		}
     }
 
     void Draw(std::string filename){
         for(int i=0; i < ListOfTextureNames.size(); i++){
             if(ListOfTextureNames[i] == filename){
-                glActiveTexture(ListOfTextureId[i]);
+                glActiveTexture(GL_TEXTURE0 + i);
                 glBindTexture(GL_TEXTURE_2D, ListOfTextureId[i]);
             }
         }

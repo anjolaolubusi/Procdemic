@@ -12,7 +12,6 @@ struct Shader
 {
 	Shader(std::string shaderName, Logger* logger) {
 		this->logger = logger;
-		try{
             this->ShaderName = shaderName;
     #ifdef _WIN32
             this->fileDir = "shaders\\" + shaderName;
@@ -37,14 +36,10 @@ struct Shader
                 throw error_string.c_str();
             }
             this->logger->Log("Shader Program has been compiled");
-		}catch(const char* msg){
-            this->logger->Log(msg, true);
-		}
 	}
 
 	Shader(std::string vertexShader, std::string fragShader, Logger* logger) {
 		this->logger = logger;
-		try{
             this->shaderProgram = glCreateProgram();
             for (int i = 0; i < NUM_OF_SHADERS; i++) {
                 if (i == 0) {
@@ -81,10 +76,6 @@ struct Shader
                 throw error_string.c_str();
             }
             this->logger->Log("Shader Program has been compiled");
-
-		}catch(const char* msg){
-            this->logger->Log(msg, true);
-		}
 	}
 
 	void Use() {
@@ -101,7 +92,6 @@ struct Shader
 	}
 
 	void LoadShaderFile(int ShaderType) {
-	    try{
             std::ifstream shaderFile;
             std::string temp_fileDir = this->fileDir;
             if (ShaderType == VERTSHADER) {
@@ -144,9 +134,6 @@ struct Shader
                 throw this->error_string.c_str();
             }
             logger->Log("OpenGL Shader has been compiled");
-	    }catch(const char* msg){
-            this->logger->Log(msg, true);
-		}
 	}
 
     void setBool(const std::string &name, bool value) const{

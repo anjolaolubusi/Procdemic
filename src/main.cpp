@@ -61,9 +61,14 @@ int main()
         TextureManager textureManager(&logger);
         textureManager.AddTexture("default.jpg");
         textureManager.AddTexture("container.jpg");
+        textureManager.AddTexture("container2.gDiff");
+        textureManager.AddTexture("container2_specular.png");
         vMan.SetIncides();
         LOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "default.jpg", glm::vec3(1, 1, 1), &logger, 1.0f, 1.0f, 1.0f);
-        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container.jpg", glm::vec3(0, 0, 1), &logger);
+        for(int i = 0; i < 3; i++){
+            float cur_pos = i*10 + 10;
+            WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container2.gDiff", "container2_specular.png", LOM.object_color_list.back(), glm::vec3(0, cur_pos, cur_pos),&logger);
+        }
         Shader currShader("light-test", &logger);
         Shader basicShader("basic", &logger);
         while (screen.isRunning()) {
@@ -74,7 +79,7 @@ int main()
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime, cam.cameraPos.x, cam.cameraPos.y, cam.cameraPos.z);
                 if (!screen.isPaused) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+                    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
                     cam.MoveCamera(screen);
                     cam.RotateCamera(screen);

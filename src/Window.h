@@ -13,7 +13,6 @@ struct Window
         //Constructor
         Window(int width, int height, const char* title, Logger* logger) {
             this->logger = logger;
-            try{
                 //Initalizes glfw
                 if (!glfwInit()) {
                     this->logger->Log("Failed to initalize GLFW");
@@ -55,10 +54,6 @@ struct Window
                 glEnable(GL_DEPTH_TEST);
                 glfwSetFramebufferSizeCallback(window, Resize);
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            }catch(const char* msg){
-                this->logger->Log(msg, true);
-            }
-
         }
 
         //Checks if window is running

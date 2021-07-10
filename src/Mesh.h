@@ -83,14 +83,11 @@ struct Mesh
 	unsigned int NumOfIndices;
 
 	void CheckForOpenGLError() {
-	    try{
-            if (glGetError() != 0) {
-                std::string err_msg = "OPENGL ERROR: " + std::to_string(glGetError());
-                throw err_msg.c_str();
+            std::string err_msg = "OPENGL ERROR: " + std::to_string(glGetError());
+            if(glGetError() != 0){
+            this->logger->Log(err_msg.c_str());
+            throw err_msg.c_str();
             }
-	    }catch(const char* msg){
-            logger->Log(msg, true);
-	    }
 	}
 
 	void ClearGPUMemory() {

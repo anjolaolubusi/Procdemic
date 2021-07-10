@@ -15,6 +15,6 @@ void main()
 {
     gl_Position = camera * transform * vec4(aPos, 1.0);
     texCoord = aTexCoord;
-	Normal = mat3(inv_model) * aNormal;
+	Normal = normalize(mat3(inv_model) * aNormal);
 	FragPos = vec3(transform * vec4(aPos, 1.0));
 }
