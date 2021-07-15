@@ -66,11 +66,15 @@ int main()
         vMan.SetIncides();
         LOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "default.jpg", glm::vec3(1, 1, 1), &logger, 1.0f, 1.0f, 1.0f);
         for(int i = 0; i < 3; i++){
-            float cur_pos = i*10 + 10;
+            float cur_pos = i*5 + 5;
             WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container2.gDiff", "container2_specular.png", LOM.object_color_list.back(), glm::vec3(0, cur_pos, cur_pos),&logger);
+            if(i == 1){
+                WOM.trans_list.back().rot=glm::vec3(0, 1, 0);
+            }
         }
         Shader currShader("light-test", &logger);
         Shader basicShader("basic", &logger);
+        logger.Log("Running Program");
         while (screen.isRunning()) {
             glfwPollEvents();
             nowTime = glfwGetTime();

@@ -104,7 +104,7 @@ public:
             shader->setInt("material.specular", textManager.GetTextureId(specular_tex_list.at(i)) - 1);
 			shader->setMat4("transform", trans_list.at(i).GetModel());
 			shader->setMat4("camera", cam.cameraMatrix());
-			shader->setVec3("light.direction", 1.0f, 0.0f, 0.0f);
+			shader->setVec3("light.direction", 1.0f, -2.0f, 1.0f);
             shader->setVec3("light.color", lightColor);
             shader->setMat4("inv_model", glm::transpose(glm::inverse(trans_list.at(i).GetModel())));
             shader->setVec3("viewPos", lightPos);
@@ -114,6 +114,9 @@ public:
             shader->setVec3("light.ambient", glm::vec3(ambient));
             shader->setVec3("light.diffuse", glm::vec3(diffuse));
             shader->setVec3("light.specular", glm::vec3(specular));
+            shader->setFloat("light.constant",  1.0f);
+            shader->setFloat("light.linear",    0.045f);
+            shader->setFloat("light.quadratic", 0.0075f);
             textManager.Draw(textures_list.at(i));
             textManager.Draw(specular_tex_list.at(i));
 			mesh_list.at(i)->Draw(shader->shaderProgram);
