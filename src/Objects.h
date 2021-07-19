@@ -81,6 +81,73 @@ public:
 	}
 };
 
+struct DirectionalLightManager{
+public:
+    std::vector<glm::vec3> direction_list;
+    std::vector<glm::vec3> color_list;
+    std::vector<glm::vec3> ambient_list;
+    std::vector<glm::vec3> diffuse_list;
+    std::vector<glm::vec3> specular_list;
+
+    int total_num;
+    Logger* logger = NULL;
+
+    DirectionalLightManager(Logger* logger){
+        total_num = -1;
+        this->logger = logger;
+    }
+
+    void Add(glm::vec3 direction, glm::vec3 color, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular){
+        direction_list.push_back(direction);
+        color_list.push_back(color);
+        ambient_list.push_back(ambient);
+        diffuse_list.push_back(diffuse);
+        specular_list.push_back(specular);
+    }
+};
+
+struct PointLightManager{
+public:
+	std::vector<glm::vec3> pos_list;
+	std::vector<glm::vec3> color_list;
+
+	std::vector<float> ambient_list;
+	std::vector<float> specular_list;
+	std::vector<float> diffuse_list;
+
+    std::vector<float> constant_list;
+	std::vector<float> linear_list;
+	std::vector<float> quadratic_list;
+
+
+	int total_num;
+	Logger* logger = NULL;
+
+	PointLightManager(Logger* logger) {
+		total_num = -1;
+		this->logger = logger;
+	}
+
+	void Add(glm::vec3 pos, glm::vec3 color, float ambient, float specular, float diffuse, float constant, float linear, float quadratic, Logger* logger) {
+		pos_list.push_back(pos);
+		color_list.push_back(color);
+		ambient_list.push_back(ambient);
+		specular_list.push_back(specular);
+		diffuse_list.push_back(diffuse);
+		constant_list.push_back(constant);
+		linear_list.push_back(linear);
+		quadratic_list.push_back(quadratic);
+		logger->Log("Added Entity to arrays");
+		total_num = pos_list.size();
+	}
+
+	~PointLightManager() {
+
+	}
+};
+
+
+
 struct WorldObjectManager {
 public:
 	std::vector<Transform> trans_list;
