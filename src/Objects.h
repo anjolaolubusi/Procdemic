@@ -11,6 +11,7 @@
 #include "VertexManager.h"
 #include "math.h"
 #include <GLFW/glfw3.h>
+#include <string>
 
 #define PI 3.14159265
 
@@ -103,6 +104,7 @@ public:
         ambient_list.push_back(ambient);
         diffuse_list.push_back(diffuse);
         specular_list.push_back(specular);
+        total_num = direction_list.size();
     }
 };
 
@@ -111,9 +113,9 @@ public:
 	std::vector<glm::vec3> pos_list;
 	std::vector<glm::vec3> color_list;
 
-	std::vector<float> ambient_list;
-	std::vector<float> specular_list;
-	std::vector<float> diffuse_list;
+	std::vector<glm::vec3> ambient_list;
+	std::vector<glm::vec3> specular_list;
+	std::vector<glm::vec3> diffuse_list;
 
     std::vector<float> constant_list;
 	std::vector<float> linear_list;
@@ -128,7 +130,7 @@ public:
 		this->logger = logger;
 	}
 
-	void Add(glm::vec3 pos, glm::vec3 color, float ambient, float specular, float diffuse, float constant, float linear, float quadratic, Logger* logger) {
+	void Add(glm::vec3 pos, glm::vec3 color, glm::vec3 ambient, glm::vec3 specular, glm::vec3 diffuse, float constant, float linear, float quadratic) {
 		pos_list.push_back(pos);
 		color_list.push_back(color);
 		ambient_list.push_back(ambient);
@@ -146,6 +148,49 @@ public:
 	}
 };
 
+struct SpotLightManager{
+public:
+	std::vector<glm::vec3> pos_list;
+	std::vector<glm::vec3> direction_list;
+    std::vector<float> cutOff_list;
+
+	std::vector<glm::vec3> color_list;
+	std::vector<glm::vec3> ambient_list;
+	std::vector<glm::vec3> specular_list;
+	std::vector<glm::vec3> diffuse_list;
+
+    std::vector<float> constant_list;
+	std::vector<float> linear_list;
+	std::vector<float> quadratic_list;
+
+
+	int total_num;
+	Logger* logger = NULL;
+
+	SpotLightManager(Logger* logger) {
+		total_num = -1;
+		this->logger = logger;
+	}
+
+	void Add(glm::vec3 pos, glm::vec3 dir, float cutOff, glm::vec3 color, glm::vec3 ambient, glm::vec3 specular, glm::vec3 diffuse, float constant, float linear, float quadratic) {
+		pos_list.push_back(pos);
+		direction_list.push_back(dir);
+		cutOff_list.push_back(cutOff);
+		color_list.push_back(color);
+		ambient_list.push_back(ambient);
+		specular_list.push_back(specular);
+		diffuse_list.push_back(diffuse);
+		constant_list.push_back(constant);
+		linear_list.push_back(linear);
+		quadratic_list.push_back(quadratic);
+		logger->Log("Added Entity to arrays");
+		total_num = pos_list.size();
+	}
+
+	~SpotLightManager() {
+
+	}
+};
 
 
 struct WorldObjectManager {
@@ -164,26 +209,55 @@ public:
 		this->logger = logger;
 	}
 
-	void Draw(Shader* shader, Camera& cam, TextureManager& textManager, glm::vec3& lightPos, glm::vec3 lightColor, float ambient=0.2f, float diffuse=0.5f, float specular=1.0f) {
+	void Draw(Shader* shader, Camera& cam, TextureManager& textManager, DirectionalLightManager& dirLightManager, PointLightManager& pointLightManager, SpotLightManager& spotLightManager) {
 		shader->Use();
 		for (int i = 0; i < total_num; i++) {
             shader->setInt("material.diffuse", textManager.GetTextureId(textures_list.at(i)) - 1);
             shader->setInt("material.specular", textManager.GetTextureId(specular_tex_list.at(i)) - 1);
 			shader->setMat4("transform", trans_list.at(i).GetModel());
 			shader->setMat4("camera", cam.cameraMatrix());
-			shader->setVec3("light.direction", 1.0f, -2.0f, 1.0f);
-            shader->setVec3("light.color", lightColor);
             shader->setMat4("inv_model", glm::transpose(glm::inverse(trans_list.at(i).GetModel())));
-            shader->setVec3("viewPos", lightPos);
+            shader->setVec3("viewPos", cam.cameraPos);
             shader->setVec3("obj_Color", object_color_list.at(i));
-            shader->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+            //shader->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
             shader->setFloat("material.shininess", 64.0f);
-            shader->setVec3("light.ambient", glm::vec3(ambient));
-            shader->setVec3("light.diffuse", glm::vec3(diffuse));
-            shader->setVec3("light.specular", glm::vec3(specular));
-            shader->setFloat("light.constant",  1.0f);
-            shader->setFloat("light.linear",    0.045f);
-            shader->setFloat("light.quadratic", 0.0075f);
+
+            for(int i = 0; i < dirLightManager.total_num; i++){
+                std::string gsl_code = "dirlight.";
+                shader->setVec3((gsl_code + "direction").c_str(), dirLightManager.direction_list.at(i));
+                shader->setVec3((gsl_code + "color").c_str(), dirLightManager.color_list.at(i));
+                shader->setVec3((gsl_code + "ambient").c_str(), dirLightManager.ambient_list.at(i));
+                shader->setVec3((gsl_code + "diffuse").c_str(), dirLightManager.diffuse_list.at(i));
+                shader->setVec3((gsl_code + "specular").c_str(), dirLightManager.specular_list.at(i));
+            }
+
+
+            for(int i = 0; i < pointLightManager.total_num; i++){
+                std::string gsl_code = "pointLight[" + std::to_string(i) + "].";
+                shader->setVec3((gsl_code + "position").c_str(), pointLightManager.pos_list.at(i));
+                shader->setVec3((gsl_code + "color").c_str(), pointLightManager.color_list.at(i));
+                shader->setVec3((gsl_code + "ambient").c_str(), pointLightManager.ambient_list.at(i));
+                shader->setVec3((gsl_code + "diffuse").c_str(), pointLightManager.diffuse_list.at(i));
+                shader->setVec3((gsl_code + "specular").c_str(), pointLightManager.specular_list.at(i));
+                shader->setFloat((gsl_code + "constant").c_str(), pointLightManager.constant_list.at(i));
+                shader->setFloat((gsl_code + "linear").c_str(), pointLightManager.linear_list.at(i));
+                shader->setFloat((gsl_code + "quadratic").c_str(), pointLightManager.quadratic_list.at(i));
+            }
+
+            for(int i = 0; i < spotLightManager.total_num; i++){
+                std::string gsl_code = "spotLight[" + std::to_string(i) + "].";
+                shader->setVec3((gsl_code + "position").c_str(), spotLightManager.pos_list.at(i));
+                shader->setVec3((gsl_code + "direction").c_str(), spotLightManager.direction_list.at(i));
+                shader->setFloat((gsl_code + "cutOff").c_str(), spotLightManager.cutOff_list.at(i));
+                shader->setVec3((gsl_code + "color").c_str(), spotLightManager.color_list.at(i));
+                shader->setVec3((gsl_code + "ambient").c_str(), spotLightManager.ambient_list.at(i));
+                shader->setVec3((gsl_code + "diffuse").c_str(), spotLightManager.diffuse_list.at(i));
+                shader->setVec3((gsl_code + "specular").c_str(), spotLightManager.specular_list.at(i));
+                shader->setFloat((gsl_code + "constant").c_str(), spotLightManager.constant_list.at(i));
+                shader->setFloat((gsl_code + "linear").c_str(), spotLightManager.linear_list.at(i));
+                shader->setFloat((gsl_code + "quadratic").c_str(), spotLightManager.quadratic_list.at(i));
+            }
+
             textManager.Draw(textures_list.at(i));
             textManager.Draw(specular_tex_list.at(i));
 			mesh_list.at(i)->Draw(shader->shaderProgram);

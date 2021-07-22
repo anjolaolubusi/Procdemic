@@ -35,6 +35,9 @@ struct Shader
                 this->logger->Log(error_string.c_str(), true);
                 throw error_string.c_str();
             }
+            int tt;
+            glGetProgramInfoLog(this->shaderProgram, sizeof(infoLog), &tt, infoLog);
+            this->logger->Log(infoLog);
             this->logger->Log("Shader Program has been compiled");
 	}
 
@@ -75,6 +78,9 @@ struct Shader
                 this->logger->Log(error_string.c_str(), true);
                 throw error_string.c_str();
             }
+            int tt;
+            glGetProgramInfoLog(this->shaderProgram, sizeof(infoLog), &tt, infoLog);
+            this->logger->Log(infoLog);
             this->logger->Log("Shader Program has been compiled");
 	}
 
