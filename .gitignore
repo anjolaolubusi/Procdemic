@@ -57,3 +57,10 @@ Procedemic.layout
 /include/glm/out/build/x64-Debug (default)/.cmake/api/v1/query/client-MicrosoftVS
 /include/glm/out/build/x64-Debug (default)/.cmake/api/v1
 /include/glm/out/build/x64-Debug (default)
+*.cbp
+/bin
+*.depend
+*.layout
+/obj
+*.jpg~
+

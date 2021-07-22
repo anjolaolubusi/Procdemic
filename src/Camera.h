@@ -57,7 +57,7 @@ struct Camera
             if (pitch > 89.0f) {
                 pitch = 89.0f;
             }
-            
+
             if (pitch < -89.0f) {
                 pitch = -89.0f;
             }
@@ -68,7 +68,7 @@ struct Camera
             direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
             cameraFront = glm::normalize(direction);
         }
-        
+
         //Returns projection * view matrix
         glm::mat4 cameraMatrix() {
             return glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f) * glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
