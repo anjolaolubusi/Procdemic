@@ -71,11 +71,13 @@ void main()
 
 	//vec3 result = getDirLights(dirlight, norm, viewDir);
 	vec3 result = vec3(0.0);
+	result += getDirLights(dirlight, norm, viewDir);
 
+	/*
 	for(int i=0; i < NR_POINT_LIGHTS; i++)
 		result += getPointLights(pointLight[i], norm, FragPos, viewDir);
-	
-	for(int i=0; i < 1; i++){
+	*/
+	for(int i=0; i < NR_POINT_LIGHTS; i++){
 		result += getSpotLight(spotLight[i], norm, FragPos, viewDir);
 	}
 
@@ -136,6 +138,7 @@ vec3 getSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
 	    diffuse *= attenuation;
 	    specular *= attenuation;
 	    return (ambient + diffuse + specular);
-	}else
+	}else{
 		return vec3(0.0);
+	}
 }
