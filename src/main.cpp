@@ -16,10 +16,12 @@
 #include "ProcGen.h"
 
 #define FPS 60
-Logger logger;
-Camera cam;
-Window screen(800, 600, "Test", &logger);
+Logger logger; //Logs all infomation to console and file
+Camera cam; //Camera object
+Window screen(800, 600, "Test", &logger); //Window objecy
 
+//Handles key inputs for non-Game stuff like pausing, exiting
+//TODO: Possible need for case and switch
 void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -49,66 +51,64 @@ int main()
     try {
         glfwSetKeyCallback(screen.window, Input);
         glfwSetErrorCallback(ErrorCallback);
-        double lastTime = glfwGetTime();
-        double nowTime, deltaTime = 0;
-        VertexManager vMan;
-        ProcGen procGen;
-        procGen.xNum = 100;
-        procGen.zNum = 100;
-        procGen.AddTriangles(vMan);
-        WorldObjectManager WOM(&logger);
-        PointLightManager POM(&logger);
-        SpotLightManager SOM(&logger);
-        DirectionalLightManager DOM(&logger);
-        LightObjectManager LOM(&logger);
-        TextureManager textureManager(&logger);
-        textureManager.AddTexture("default.jpg");
+        double lastTime = glfwGetTime(); //Gets time for last frame
+        double nowTime, deltaTime = 0; //Sets the variables for the time of current frame and the time between the current frame and last frame
+        VertexManager vMan; //Vertex Manager
+        ProcGen procGen; //Creates the plane object that would represent our island
+        procGen.xNum = 100; //Number of squares on the x-axis for our plane
+        procGen.zNum = 100; //Number of squares on the y-axis for our plane
+        procGen.AddTriangles(vMan); //Island vertex to vertex Manager
+        WorldObjectManager WOM(&logger); //Struct containing all the objects that obey the rules of the world
+        PointLightManager POM(&logger); //Struct containing all the point light objects
+        SpotLightManager SOM(&logger); //Struct containing all the spot light objects
+        DirectionalLightManager DOM(&logger); //Struct containing all the directional light objects
+        TextureManager textureManager(&logger); //Struct contains all the textures
+        textureManager.AddTexture("default.jpg"); //Adds a texture
         textureManager.AddTexture("container.jpg");
         textureManager.AddTexture("container2.gDiff");
         textureManager.AddTexture("container2_specular.png");
         textureManager.AddTexture("ground-texture.png");
-        vMan.SetIncides();
-        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container2.gDiff", "container2_specular.png", glm::vec3(1, 1, 1), glm::vec3(0, -1, -6),&logger);
+        vMan.SetIncides(); //Sets the incides
+        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container2.gDiff", "container2_specular.png", glm::vec3(1, 1, 1), glm::vec3(0, -1, -6),&logger); //Adds plane object
 
 
         //POM.Add(glm::vec3(0, -1, -6), glm::vec3(1, 1, 1), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.7f, 0.7f, 0.7f), 1.0f, 0.04f, 0.006f);
-        DOM.Add(glm::vec3(1, 0, 0), glm::vec3(1, 1, 1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.3f, 0.3f, 0.3f), true);
-        Shader currShader("light-test", &logger);
-        SOM.Add(cam.cameraPos, cam.cameraFront, glm::cos(glm::radians(12.5f)), glm::vec3(1, 1, 1), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 0.7, 1.8f, false);
-        Shader basicShader("basic", &logger);
+        DOM.Add(glm::vec3(1, 0, 0), glm::vec3(1, 1, 1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.3f, 0.3f, 0.3f), true); //Adds Directional Light
+        Shader currShader("light-test", &logger); //Adds shader for the object
+        SOM.Add(cam.cameraPos, cam.cameraFront, glm::cos(glm::radians(12.5f)), glm::vec3(1, 1, 1), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 0.7, 1.8f, false); //Add spotlight
+        Shader basicShader("basic", &logger); //Add basic shader for the light object
         logger.Log("Running Program");
         while (screen.isRunning()) {
-            glfwPollEvents();
-            nowTime = glfwGetTime();
-            deltaTime = nowTime - lastTime;
-            if (1 / deltaTime < FPS) {
-                screen.UpdateSysStats(deltaTime, 1 / deltaTime, cam.cameraPos.x, cam.cameraPos.y, cam.cameraPos.z);
-                if (!screen.isPaused) {
-                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+            glfwPollEvents(); //Gathers events i.e Keyboard presses, exiting window
+            nowTime = glfwGetTime(); //Gets the current time
+            deltaTime = nowTime - lastTime; //Calculates the time between the currrent frame and the last frame
+            if (1 / deltaTime < FPS) { //Checks if the FPS is lower than the max
+                screen.UpdateSysStats(deltaTime, 1 / deltaTime, cam.cameraPos.x, cam.cameraPos.y, cam.cameraPos.z); //Updates the title
+                if (!screen.isPaused) { //If the screen is not paused
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Allows depth
+                    glClearColor(0.0f, 0.0f, 1.0f, 1.0f); //Sets the background colour to blue
 
+                    cam.MoveCamera(screen); //Moves the camera according to the user's movement
+                    cam.RotateCamera(screen); //Rotates the camera according to the user's movement
 
-                    cam.MoveCamera(screen);
-                    cam.RotateCamera(screen);
-
-                    SOM.pos_list.back() = cam.cameraPos;
-                    SOM.direction_list.back() = cam.cameraFront;
-                    WOM.Update();
-                    WOM.Draw(&currShader, cam, textureManager, DOM, POM, SOM);
-                    screen.Update();
+                    SOM.pos_list.back() = cam.cameraPos; //Updates the spotlight postion
+                    SOM.direction_list.back() = cam.cameraFront; //Updates the spotlight's direction
+                    WOM.Update(); //Updates the world's update
+                    WOM.Draw(&currShader, cam, textureManager, DOM, POM, SOM); //Draws the World Objects to screen
+                    screen.Update(); //Updates the screen
                 }
-                lastTime = glfwGetTime();
+                lastTime = glfwGetTime(); //Gets the time for the last frame
             }
             else {
 #ifdef _WIN32
-                Sleep(deltaTime - 1 / FPS);
+                Sleep(deltaTime - 1 / FPS); //Sleeps if on windows
 #else
-                usleep(deltaTime - 1 / FPS);
+                usleep(deltaTime - 1 / FPS); //Sleeps if on mac
 #endif
             }
         }
 
-        screen.CloseAllGLFW();
+        screen.CloseAllGLFW(); //Closes window and deletes window/GLFW from memory
     }catch(const char* msg){
         return -1;
     }

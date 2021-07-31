@@ -12,6 +12,7 @@ struct ProcGen{
 	int xNum;
 	int zNum;
 
+	//Adds traingles for island plane
 	void AddTriangles(VertexManager& vMan){
 		for (float x = 0; x < xNum; x++) {
 			for (float z = 0; z < zNum; z++) {
