@@ -6,6 +6,8 @@ layout (location = 2) in vec3 aNormal;
 out vec2 texCoord;
 out vec3 Normal;
 out vec3 FragPos;
+out vec3 NewPos;
+
 
 uniform mat4 transform;
 uniform mat4 camera;
@@ -48,11 +50,12 @@ float noise (in vec2 st) {
 
 void main()
 {
-	vec3 newPos = vec3(aPos.x, noise(aPos.xz * 4), aPos.z);
+	vec3 newPos = vec3(aPos.x, noise(aPos.xz * 20), aPos.z);
 	vec3 newNorm = cross(vec3(12.44, 5.335, 42), aNormal);
 	gl_Position = camera * transform * vec4(newPos, 1.0);
 	texCoord = aTexCoord;
 	//Normal = normalize(mat3(inv_model) * aNormal);
 	Normal = normalize(mat3(inv_model) * newNorm);
 	FragPos = vec3(transform * vec4(newPos, 1.0));
+	NewPos = newPos;
 }

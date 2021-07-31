@@ -72,9 +72,9 @@ int main()
 
 
         //POM.Add(glm::vec3(0, -1, -6), glm::vec3(1, 1, 1), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.7f, 0.7f, 0.7f), 1.0f, 0.04f, 0.006f);
-        DOM.Add(glm::vec3(1, 0, 0), glm::vec3(1, 1, 1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.3f, 0.3f, 0.3f));
+        DOM.Add(glm::vec3(1, 0, 0), glm::vec3(1, 1, 1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.3f, 0.3f, 0.3f), true);
         Shader currShader("light-test", &logger);
-        SOM.Add(cam.cameraPos, cam.cameraFront, glm::cos(glm::radians(12.5f)), glm::vec3(1, 1, 1), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 0.7, 1.8f);
+        SOM.Add(cam.cameraPos, cam.cameraFront, glm::cos(glm::radians(12.5f)), glm::vec3(1, 1, 1), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 0.7, 1.8f, false);
         Shader basicShader("basic", &logger);
         logger.Log("Running Program");
         while (screen.isRunning()) {
@@ -85,7 +85,7 @@ int main()
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime, cam.cameraPos.x, cam.cameraPos.y, cam.cameraPos.z);
                 if (!screen.isPaused) {
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+                    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
 
                     cam.MoveCamera(screen);

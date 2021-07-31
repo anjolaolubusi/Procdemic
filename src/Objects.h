@@ -89,6 +89,7 @@ public:
     std::vector<glm::vec3> ambient_list;
     std::vector<glm::vec3> diffuse_list;
     std::vector<glm::vec3> specular_list;
+    std::vector<bool> isOn_list;
 
     int total_num;
     Logger* logger = NULL;
@@ -98,12 +99,13 @@ public:
         this->logger = logger;
     }
 
-    void Add(glm::vec3 direction, glm::vec3 color, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular){
+    void Add(glm::vec3 direction, glm::vec3 color, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, bool isOn){
         direction_list.push_back(direction);
         color_list.push_back(color);
         ambient_list.push_back(ambient);
         diffuse_list.push_back(diffuse);
         specular_list.push_back(specular);
+        isOn_list.push_back(isOn);
         total_num = direction_list.size();
     }
 };
@@ -120,6 +122,7 @@ public:
     std::vector<float> constant_list;
 	std::vector<float> linear_list;
 	std::vector<float> quadratic_list;
+    std::vector<bool> isOn_list;
 
 
 	int total_num;
@@ -130,7 +133,7 @@ public:
 		this->logger = logger;
 	}
 
-	void Add(glm::vec3 pos, glm::vec3 color, glm::vec3 ambient, glm::vec3 specular, glm::vec3 diffuse, float constant, float linear, float quadratic) {
+	void Add(glm::vec3 pos, glm::vec3 color, glm::vec3 ambient, glm::vec3 specular, glm::vec3 diffuse, float constant, float linear, float quadratic, bool isOn) {
 		pos_list.push_back(pos);
 		color_list.push_back(color);
 		ambient_list.push_back(ambient);
@@ -139,6 +142,7 @@ public:
 		constant_list.push_back(constant);
 		linear_list.push_back(linear);
 		quadratic_list.push_back(quadratic);
+		isOn_list.push_back(isOn);
 		logger->Log("Added Entity to arrays");
 		total_num = pos_list.size();
 	}
@@ -162,6 +166,8 @@ public:
     std::vector<float> constant_list;
 	std::vector<float> linear_list;
 	std::vector<float> quadratic_list;
+    std::vector<bool> isOn_list;
+
 
 
 	int total_num;
@@ -172,7 +178,7 @@ public:
 		this->logger = logger;
 	}
 
-	void Add(glm::vec3 pos, glm::vec3 dir, float cutOff, glm::vec3 color, glm::vec3 ambient, glm::vec3 specular, glm::vec3 diffuse, float constant, float linear, float quadratic) {
+	void Add(glm::vec3 pos, glm::vec3 dir, float cutOff, glm::vec3 color, glm::vec3 ambient, glm::vec3 specular, glm::vec3 diffuse, float constant, float linear, float quadratic, bool isOn) {
 		pos_list.push_back(pos);
 		direction_list.push_back(dir);
 		cutOff_list.push_back(cutOff);
@@ -183,6 +189,7 @@ public:
 		constant_list.push_back(constant);
 		linear_list.push_back(linear);
 		quadratic_list.push_back(quadratic);
+		isOn_list.push_back(isOn);
 		logger->Log("Added Entity to arrays");
 		total_num = pos_list.size();
 	}
@@ -222,6 +229,16 @@ public:
             //shader->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
             shader->setFloat("material.shininess", 64.0f);
 
+            if(dirLightManager.total_num > 0){
+                shader->setBool("hasDirLight", true);
+            }
+            if(pointLightManager.total_num > 0){
+                shader->setBool("hasPointLight", true);
+            }
+            if(spotLightManager.total_num > 0){
+                shader->setBool("hasSpotLight", true);
+            }
+
             for(int i = 0; i < dirLightManager.total_num; i++){
                 std::string gsl_code = "dirlight.";
                 shader->setVec3((gsl_code + "direction").c_str(), dirLightManager.direction_list.at(i));
@@ -229,6 +246,7 @@ public:
                 shader->setVec3((gsl_code + "ambient").c_str(), dirLightManager.ambient_list.at(i));
                 shader->setVec3((gsl_code + "diffuse").c_str(), dirLightManager.diffuse_list.at(i));
                 shader->setVec3((gsl_code + "specular").c_str(), dirLightManager.specular_list.at(i));
+                shader->setBool((gsl_code + "isOn").c_str(), dirLightManager.isOn_list.at(i));
             }
 
 
@@ -242,6 +260,7 @@ public:
                 shader->setFloat((gsl_code + "constant").c_str(), pointLightManager.constant_list.at(i));
                 shader->setFloat((gsl_code + "linear").c_str(), pointLightManager.linear_list.at(i));
                 shader->setFloat((gsl_code + "quadratic").c_str(), pointLightManager.quadratic_list.at(i));
+                shader->setBool((gsl_code + "isOn").c_str(), dirLightManager.isOn_list.at(i));
             }
 
             for(int i = 0; i < spotLightManager.total_num; i++){
@@ -256,6 +275,7 @@ public:
                 shader->setFloat((gsl_code + "constant").c_str(), spotLightManager.constant_list.at(i));
                 shader->setFloat((gsl_code + "linear").c_str(), spotLightManager.linear_list.at(i));
                 shader->setFloat((gsl_code + "quadratic").c_str(), spotLightManager.quadratic_list.at(i));
+                shader->setBool((gsl_code + "isOn").c_str(), dirLightManager.isOn_list.at(i));
             }
 
             textManager.Draw(textures_list.at(i));
