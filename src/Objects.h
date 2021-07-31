@@ -109,7 +109,7 @@ public:
         specular_list.push_back(specular);
         isOn_list.push_back(isOn);
         total_num = direction_list.size();
-        logger->Log("Added Directional Light to Directional Light Array")
+        logger->Log("Added Directional Light to Directional Light Array");
     }
 };
 
