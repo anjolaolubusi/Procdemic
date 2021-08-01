@@ -1,3 +1,7 @@
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #include <iostream>
 #include "Logger.h"
 #include "Window.h"
@@ -15,10 +19,11 @@
 #include "Objects.h"
 #include "ProcGen.h"
 
+
 #define FPS 60
 Logger logger; //Logs all infomation to console and file
-Camera cam; //Camera object
 Window screen(800, 600, "Test", &logger); //Window objecy
+Camera cam; //Camera object
 
 //Handles key inputs for non-Game stuff like pausing, exiting
 //TODO: Possible need for case and switch
@@ -35,6 +40,16 @@ void Input(GLFWwindow* window, int key, int scancode, int action, int mods){
         }
         else {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+    }
+
+    if(key== GLFW_KEY_E && action == GLFW_PRESS){
+        if(screen.isWireframe){
+            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+            screen.isWireframe = !screen.isWireframe;
+        }else{
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+            screen.isWireframe = !screen.isWireframe;
         }
     }
 
@@ -77,29 +92,51 @@ int main()
         Shader currShader("light-test", &logger); //Adds shader for the object
         SOM.Add(cam.cameraPos, cam.cameraFront, glm::cos(glm::radians(12.5f)), glm::vec3(1, 1, 1), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 0.7, 1.8f, false); //Add spotlight
         Shader basicShader("basic", &logger); //Add basic shader for the light object
+
+    const char* glsl_version = "#version 330";
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(screen.window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
         logger.Log("Running Program");
         while (screen.isRunning()) {
             glfwPollEvents(); //Gathers events i.e Keyboard presses, exiting window
             nowTime = glfwGetTime(); //Gets the current time
             deltaTime = nowTime - lastTime; //Calculates the time between the currrent frame and the last frame
+
+
             if (1 / deltaTime < FPS) { //Checks if the FPS is lower than the max
                 screen.UpdateSysStats(deltaTime, 1 / deltaTime, cam.cameraPos.x, cam.cameraPos.y, cam.cameraPos.z); //Updates the title
-                if (!screen.isPaused) { //If the screen is not paused
-                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Allows depth
-                    glClearColor(0.0f, 0.0f, 1.0f, 1.0f); //Sets the background colour to blue
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Allows depth
+                glClearColor(0.0f, 0.0f, 1.0f, 1.0f); //Sets the background colour to blue
 
+                if (!screen.isPaused) { //If the screen is not paused
                     cam.MoveCamera(screen); //Moves the camera according to the user's movement
                     cam.RotateCamera(screen); //Rotates the camera according to the user's movement
-
-                    SOM.pos_list.back() = cam.cameraPos; //Updates the spotlight postion
-                    SOM.direction_list.back() = cam.cameraFront; //Updates the spotlight's direction
-                    WOM.Update(); //Updates the world's update
-                    WOM.Draw(&currShader, cam, textureManager, DOM, POM, SOM); //Draws the World Objects to screen
-                    screen.Update(); //Updates the screen
                 }
+
+                SOM.pos_list.back() = cam.cameraPos; //Updates the spotlight postion
+                SOM.direction_list.back() = cam.cameraFront; //Updates the spotlight's direction
+
+                WOM.Update(); //Updates the world's update
+                WOM.Draw(&currShader, cam, textureManager, DOM, POM, SOM); //Draws the World Objects to screen
+                ImGui_ImplOpenGL3_NewFrame();
+                ImGui_ImplGlfw_NewFrame();
+                ImGui::NewFrame();
+
+                ImGui::Begin("This is a text window");
+                ImGui::Text("Hello There. Put some buttons here");
+                ImGui::End();
+
+                ImGui::Render();
+                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+                screen.Update(); //Updates the screen
                 lastTime = glfwGetTime(); //Gets the time for the last frame
-            }
-            else {
+            } else {
 #ifdef _WIN32
                 Sleep(deltaTime - 1 / FPS); //Sleeps if on windows
 #else
@@ -107,6 +144,10 @@ int main()
 #endif
             }
         }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
         screen.CloseAllGLFW(); //Closes window and deletes window/GLFW from memory
     }catch(const char* msg){

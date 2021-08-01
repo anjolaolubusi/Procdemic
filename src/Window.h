@@ -19,6 +19,15 @@ struct Window
                     throw "Failed to initalize GLFW";
                 }
 
+                //Defines OpenGL context
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+                //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    #if __APPLE__
+                glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
+
+
                 //Sets up Window class
                 window = glfwCreateWindow(width, height, title, NULL, NULL);
                 this->title = title;
@@ -31,13 +40,6 @@ struct Window
                     throw "Failed to initalize window";
                 }
 
-                //Defines OpenGL context
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    #if __APPLE__
-                glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
                 //Sets current context to this window
                 glfwMakeContextCurrent(this->window);
 
@@ -48,6 +50,12 @@ struct Window
                     this->logger->Log("Failed to initialize GLAD");
                     throw "Failed to initialize GLAD";
                 }
+
+                /*if(gladLoadGL() == 0){
+                     glfwTerminate();
+                    this->logger->Log("Failed to initialize GLAD");
+                    throw "Failed to initialize GLAD";
+                }*/
 
                 glfwGetFramebufferSize(window, &width, &height);
                 glViewport(0, 0, width, height);
@@ -99,6 +107,7 @@ struct Window
         Logger* logger;
         bool isPaused = false;
         bool hasBeenPaused = false;
+        bool isWireframe = true;
 
 };
 
