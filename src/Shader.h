@@ -8,11 +8,15 @@
 #include "Transform.h"
 #include "Camera.h"
 
+//Heavily inspired from this source: https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/shader_s.h
+
 struct Shader
 {
+    //Constuctor
 	Shader(std::string shaderName, Logger* logger) {
 		this->logger = logger;
             this->ShaderName = shaderName;
+            //Grabs shader code
     #ifdef _WIN32
             this->fileDir = "shaders\\" + shaderName;
     #else
@@ -20,10 +24,12 @@ struct Shader
     #endif
             this->shaderProgram = glCreateProgram();
             for (int i = 0; i < NUM_OF_SHADERS; i++) {
-                LoadShaderFile(i);
-                glAttachShader(this->shaderProgram, this->Shaders[i]);
+                LoadShaderFile(i); //Loads Shader Code
+                glAttachShader(this->shaderProgram, this->Shaders[i]); //Attachs it to shader object
             }
-            glLinkProgram(this->shaderProgram);
+            glLinkProgram(this->shaderProgram); //Links shader program
+
+            //Checks for errors
             int success;
             char infoLog[512];
             glGetProgramiv(this->shaderProgram, GL_LINK_STATUS, &success);
@@ -44,6 +50,8 @@ struct Shader
 	Shader(std::string vertexShader, std::string fragShader, Logger* logger) {
 		this->logger = logger;
             this->shaderProgram = glCreateProgram();
+
+            //Loads Shader Code and Attaches it to Shader Object
             for (int i = 0; i < NUM_OF_SHADERS; i++) {
                 if (i == 0) {
                     this->ShaderName = vertexShader;
@@ -67,6 +75,8 @@ struct Shader
                 }
             }
             glLinkProgram(this->shaderProgram);
+
+            //Checks for Error
             int success;
             char infoLog[512];
             glGetProgramiv(this->shaderProgram, GL_LINK_STATUS, &success);
@@ -84,10 +94,12 @@ struct Shader
             this->logger->Log("Shader Program has been compiled");
 	}
 
+	//Uses particular Shader
 	void Use() {
 		glUseProgram(this->shaderProgram);
 	}
 
+	//Removes shader from GPU and RAM
 	~Shader() {
 		for (int i = 0; i < NUM_OF_SHADERS; i++) {
 			glDetachShader(this->shaderProgram, this->Shaders[i]);
@@ -97,6 +109,7 @@ struct Shader
 		this->logger->Log("Shader is deleted from memory");
 	}
 
+	//Loads Shader file from shader folder
 	void LoadShaderFile(int ShaderType) {
             std::ifstream shaderFile;
             std::string temp_fileDir = this->fileDir;

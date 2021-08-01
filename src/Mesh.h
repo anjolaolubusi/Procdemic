@@ -9,6 +9,7 @@
 
 struct Mesh
 {
+    //Constuctor
 	Mesh(VertexManager vertManage, size_t NumberOfVertices, unsigned int* indices, unsigned int numIndices, Logger* logger) {
 		this->logger = logger;
 		this->NumOfIndices = numIndices;
@@ -19,7 +20,7 @@ struct Mesh
 
 		glBindVertexArray(this->VAO);
 
-		//TODO: Abstract for loop
+		//Binds each buffer to each particular data
 		for (int i = 0; i < NUM_BUFFERS; i++) {
 			switch (i) {
 			case POS:
@@ -73,6 +74,8 @@ struct Mesh
     unsigned int VAO;
     enum BUFFERS{POS, TEXTURES, INDEX, NORMAL, NUM_BUFFERS};
     unsigned int VBO[NUM_BUFFERS];
+
+    //Draws Meshes
 	void Draw(unsigned int shaderProgram) {
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
@@ -82,6 +85,7 @@ struct Mesh
 
 	unsigned int NumOfIndices;
 
+	//Checks for OpenGL errors
 	void CheckForOpenGLError() {
             std::string err_msg = "OPENGL ERROR: " + std::to_string(glGetError());
             if(glGetError() != 0){
@@ -90,12 +94,14 @@ struct Mesh
             }
 	}
 
+    //Properly deletes the mesh from the GPU memory
 	void ClearGPUMemory() {
 		glDeleteVertexArrays(1, &this->VAO);
 		glDeleteBuffers(NUM_BUFFERS, this->VBO);
 		this->logger->Log("Buffers and Vertex Arrays Are Deleted");
 	}
 
+	//Deconstuctor
     ~Mesh() {
 		glDeleteVertexArrays(1, &this->VAO);
 		glDeleteBuffers(NUM_BUFFERS, this->VBO);

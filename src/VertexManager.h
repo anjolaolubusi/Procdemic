@@ -11,6 +11,7 @@ struct VertexManager {
 	std::vector<unsigned int> indices;
     std::vector<glm::vec3> normal_list;
 
+    //Adds Vertex to list
 	void Add(glm::vec3 pos, glm::vec2 tex, glm::vec3 normal) {
 		pos_list.push_back(pos);
 		tex_list.push_back(tex);

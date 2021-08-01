@@ -8,6 +8,7 @@
 struct Transform
 {
 public:
+    //Constructor
 	Transform(const glm::vec3& pos = glm::vec3(), const glm::vec3& rot = glm::vec3(), const glm::vec3& scale = glm::vec3(1.0f, 1.0f, 1.0f))
 	{
 		this->pos = pos;
@@ -15,6 +16,7 @@ public:
 		this->scale = scale;
 	}
 
+	//Gets matrices representing the object
 	inline glm::mat4 GetModel()
 	{
 		glm::mat4 posMat = glm::translate(pos);
