@@ -223,7 +223,7 @@ public:
 	}
 
 	//Draws Object
-	void Draw(Shader* shader, Camera& cam, TextureManager& textManager, DirectionalLightManager& dirLightManager, PointLightManager& pointLightManager, SpotLightManager& spotLightManager) {
+	void Draw(Shader* shader, Camera& cam, TextureManager& textManager, DirectionalLightManager& dirLightManager, PointLightManager& pointLightManager, SpotLightManager& spotLightManager, float& scale) {
 		shader->Use(); //Uses the current selected shader
 		for (int i = 0; i < total_num; i++) {
             shader->setInt("material.diffuse", textManager.GetTextureId(textures_list.at(i)) - 1); //Sets Diffuse texutre
@@ -235,14 +235,17 @@ public:
             shader->setVec3("obj_Color", object_color_list.at(i));
             //shader->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
             shader->setFloat("material.shininess", 64.0f);
+            shader->setFloat("u_scale", scale);
 
             //Checks for which surrounding lights are activated
             if(dirLightManager.total_num > 0){
                 shader->setBool("hasDirLight", true);
             }
+
             if(pointLightManager.total_num > 0){
                 shader->setBool("hasPointLight", true);
             }
+
             if(spotLightManager.total_num > 0){
                 shader->setBool("hasSpotLight", true);
             }
@@ -258,7 +261,6 @@ public:
                 shader->setBool((gsl_code + "isOn").c_str(), dirLightManager.isOn_list.at(i));
             }
 
-
             //Sets point lighting
             for(int i = 0; i < pointLightManager.total_num; i++){
                 std::string gsl_code = "pointLight[" + std::to_string(i) + "].";
@@ -273,6 +275,7 @@ public:
                 shader->setBool((gsl_code + "isOn").c_str(), dirLightManager.isOn_list.at(i));
             }
 
+
             //Sets spot lighting
             for(int i = 0; i < spotLightManager.total_num; i++){
                 std::string gsl_code = "spotLight[" + std::to_string(i) + "].";
@@ -286,7 +289,7 @@ public:
                 shader->setFloat((gsl_code + "constant").c_str(), spotLightManager.constant_list.at(i));
                 shader->setFloat((gsl_code + "linear").c_str(), spotLightManager.linear_list.at(i));
                 shader->setFloat((gsl_code + "quadratic").c_str(), spotLightManager.quadratic_list.at(i));
-                shader->setBool((gsl_code + "isOn").c_str(), dirLightManager.isOn_list.at(i));
+                shader->setBool((gsl_code + "isOn").c_str(), spotLightManager.isOn_list.at(i));
             }
 
             //Draws lighting

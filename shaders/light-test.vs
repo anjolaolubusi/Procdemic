@@ -12,6 +12,7 @@ out vec3 NewPos;
 uniform mat4 transform;
 uniform mat4 camera;
 uniform mat4 inv_model;
+uniform float u_scale;
 
 #ifdef GL_ES
 precision mediump float;
@@ -68,8 +69,8 @@ float fbm (in vec2 st) {
 
 void main()
 {
-	vec3 newPos = vec3(aPos.x, fbm(aPos.xz), aPos.z);
-	vec3 newNorm = cross(vec3(12.44, 5.335, 42), aNormal);
+	vec3 newPos = vec3(aPos.x, fbm((aPos.xz+vec2(0.1, 0.1)) * u_scale), aPos.z);
+	vec3 newNorm = cross(newPos, aNormal);
 	gl_Position = camera * transform * vec4(newPos, 1.0);
 	texCoord = aTexCoord;
 	//Normal = normalize(mat3(inv_model) * aNormal);

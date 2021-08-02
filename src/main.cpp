@@ -84,14 +84,15 @@ int main()
         textureManager.AddTexture("container2_specular.png");
         textureManager.AddTexture("ground-texture.png");
         vMan.SetIncides(); //Sets the incides
-        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "container2.gDiff", "container2_specular.png", glm::vec3(1, 1, 1), glm::vec3(0, -1, -6),&logger); //Adds plane object
-
+        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "default.jpg", "container2_specular.png", glm::vec3(1, 1, 1), glm::vec3(0, -1, -6),&logger); //Adds plane object
 
         //POM.Add(glm::vec3(0, -1, -6), glm::vec3(1, 1, 1), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.7f, 0.7f, 0.7f), 1.0f, 0.04f, 0.006f);
         DOM.Add(glm::vec3(1, 0, 0), glm::vec3(1, 1, 1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.3f, 0.3f, 0.3f), true); //Adds Directional Light
         Shader currShader("light-test", &logger); //Adds shader for the object
-        SOM.Add(cam.cameraPos, cam.cameraFront, glm::cos(glm::radians(12.5f)), glm::vec3(1, 1, 1), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 0.7, 1.8f, false); //Add spotlight
+        SOM.Add(cam.cameraPos, cam.cameraFront, glm::cos(glm::radians(12.5f)), glm::vec3(1, 1, 1), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 0.7, 1.8f, true); //Add spotlight
         Shader basicShader("basic", &logger); //Add basic shader for the light object
+
+        float u_scale = 0.0f;
 
     const char* glsl_version = "#version 330";
     IMGUI_CHECKVERSION();
@@ -113,6 +114,7 @@ int main()
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Allows depth
                 glClearColor(0.0f, 0.0f, 1.0f, 1.0f); //Sets the background colour to blue
 
+
                 if (!screen.isPaused) { //If the screen is not paused
                     cam.MoveCamera(screen); //Moves the camera according to the user's movement
                     cam.RotateCamera(screen); //Rotates the camera according to the user's movement
@@ -122,13 +124,14 @@ int main()
                 SOM.direction_list.back() = cam.cameraFront; //Updates the spotlight's direction
 
                 WOM.Update(); //Updates the world's update
-                WOM.Draw(&currShader, cam, textureManager, DOM, POM, SOM); //Draws the World Objects to screen
+                WOM.Draw(&currShader, cam, textureManager, DOM, POM, SOM, u_scale); //Draws the World Objects to screen
+
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplGlfw_NewFrame();
                 ImGui::NewFrame();
 
-                ImGui::Begin("This is a text window");
-                ImGui::Text("Hello There. Put some buttons here");
+                ImGui::Begin("Procedual Generation Options");
+                ImGui::SliderFloat("Scale", &u_scale, 0.0f, 10.0f);
                 ImGui::End();
 
                 ImGui::Render();

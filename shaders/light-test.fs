@@ -110,6 +110,8 @@ vec3 getDirLights(DirLight light, vec3 Normal, vec3 viewDir){
 		vec3 specular = spec * light.color * light.specular * texture(material.specular, texCoord).rgb;
 
 		return (ambient + diffuse + specular);
+	}else{
+		return vec3(0.0);
 	}
 }
 
@@ -132,6 +134,8 @@ vec3 getPointLights(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
 	    diffuse *= attenuation;
 	    specular *= attenuation;
 	    return (ambient + diffuse + specular);
+	}else{
+		return vec3(0.0);
 	}
 }
 
@@ -159,5 +163,7 @@ vec3 getSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
 		}else{
 			return vec3(0.0);
 		}
+	}else{
+		return vec3(0.0);
 	}
 }
