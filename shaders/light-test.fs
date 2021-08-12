@@ -78,6 +78,36 @@ void main()
 	
 	//vec3 result = getDirLights(dirlight, norm, viewDir);
 	vec3 result = vec3(0.0);
+	
+	if(NewPos.y <= 0){
+		//result = vec3(0.396, 0.733, 0.78);	
+		result = vec3(0.284, 0.643, 0.875);
+	}
+	
+	if(NewPos.y > 0 && NewPos.y <= 0.3){
+		result = vec3(0.76, 0.70, 0.50);
+	}
+
+	if(NewPos.y > 0.3 && NewPos.y <= 0.5){
+		result = vec3(0, 0.684, 0.102);
+	}
+
+	if(NewPos.y > 0.5 && NewPos.y <= 0.55){
+		result = vec3(0, 0.568, 0.084);
+	}
+
+	if(NewPos.y > 0.55 && NewPos.y <= 0.65){
+		result = vec3(0.45, 0.35, 0.24);
+	}
+
+	if(NewPos.y > 0.65 && NewPos.y <= 0.8){
+		result = vec3(0.31, 0.23, 0.16);
+	}
+
+	if(NewPos.y > 0.8){
+		result = vec3(0.96);
+	}
+
 	if(hasDirLight){
 		result += getDirLights(dirlight, norm, viewDir);
 	}	
@@ -94,7 +124,7 @@ void main()
 		}
 	}
 
-	FragColor = vec4(result, 1.0);
+	FragColor = vec4(vec3(NewPos.y), 1.0);
 }
 
 vec3 getDirLights(DirLight light, vec3 Normal, vec3 viewDir){

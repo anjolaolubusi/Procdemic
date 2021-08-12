@@ -223,7 +223,8 @@ public:
 	}
 
 	//Draws Object
-	void Draw(Shader* shader, Camera& cam, TextureManager& textManager, DirectionalLightManager& dirLightManager, PointLightManager& pointLightManager, SpotLightManager& spotLightManager, float& scale) {
+	void Draw(Shader* shader, Camera& cam, TextureManager& textManager, DirectionalLightManager& dirLightManager, PointLightManager& pointLightManager, SpotLightManager& spotLightManager,
+           float& scale, bool& showHeight, glm::ivec3 Grads[], int perm[]) {
 		shader->Use(); //Uses the current selected shader
 		for (int i = 0; i < total_num; i++) {
             shader->setInt("material.diffuse", textManager.GetTextureId(textures_list.at(i)) - 1); //Sets Diffuse texutre
@@ -236,6 +237,10 @@ public:
             //shader->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
             shader->setFloat("material.shininess", 64.0f);
             shader->setFloat("u_scale", scale);
+            shader->setBool("showHeight", showHeight);
+
+            glUniform3iv(glGetUniformLocation(shader->shaderProgram, "grads"), 12, &Grads[0][0]);
+            glUniform1iv(glGetUniformLocation(shader->shaderProgram, "perm"), 512, &perm[0]);
 
             //Checks for which surrounding lights are activated
             if(dirLightManager.total_num > 0){
