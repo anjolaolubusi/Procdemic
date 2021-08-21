@@ -330,4 +330,130 @@ public:
 	}
 };
 
+struct TerrainObjectManager {
+public:
+	std::vector<Transform> trans_list; //List of transform (Represents the object in 3D space)
+	std::vector<Mesh*> mesh_list; //List of meshes
+	std::vector<glm::vec3> object_color_list; //List of object colour
+	std::vector<std::string> textures_list; //List of texutre
+    std::vector<std::string> specular_tex_list; //List of specular textures
+
+	int total_num;
+	Logger* logger = NULL;
+
+	TerrainObjectManager(Logger* logger) {
+		total_num = -1;
+		this->logger = logger;
+	}
+
+	//Draws Object
+	void Draw(Shader* shader, Camera& cam, TextureManager& textManager, DirectionalLightManager& dirLightManager, PointLightManager& pointLightManager, SpotLightManager& spotLightManager,
+           float& scale, bool& showHeight, glm::ivec3 Grads[], int perm[], glm::vec2 seed) {
+		shader->Use(); //Uses the current selected shader
+		for (int i = 0; i < total_num; i++) {
+            shader->setInt("material.diffuse", textManager.GetTextureId(textures_list.at(i)) - 1); //Sets Diffuse texutre
+            shader->setInt("material.specular", textManager.GetTextureId(specular_tex_list.at(i)) - 1); // Sets Specular texture
+			shader->setMat4("transform", trans_list.at(i).GetModel()); //Sets transform position
+			shader->setMat4("camera", cam.cameraMatrix());
+            shader->setMat4("inv_model", glm::transpose(glm::inverse(trans_list.at(i).GetModel())));
+            shader->setVec3("viewPos", cam.cameraPos);
+            shader->setVec3("obj_Color", object_color_list.at(i));
+            //shader->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+            shader->setFloat("material.shininess", 64.0f);
+            shader->setFloat("u_scale", scale);
+            shader->setBool("showHeight", showHeight);
+
+            glUniform3iv(glGetUniformLocation(shader->shaderProgram, "grads"), 12, &Grads[0][0]);
+            glUniform1iv(glGetUniformLocation(shader->shaderProgram, "perm"), 512, &perm[0]);
+            shader->setVec2("seed", seed);
+
+            //Checks for which surrounding lights are activated
+            if(dirLightManager.total_num > 0){
+                shader->setBool("hasDirLight", true);
+            }
+
+            if(pointLightManager.total_num > 0){
+                shader->setBool("hasPointLight", true);
+            }
+
+            if(spotLightManager.total_num > 0){
+                shader->setBool("hasSpotLight", true);
+            }
+
+            //Sets directional lighting
+            for(int i = 0; i < dirLightManager.total_num; i++){
+                std::string gsl_code = "dirlight.";
+                shader->setVec3((gsl_code + "direction").c_str(), dirLightManager.direction_list.at(i));
+                shader->setVec3((gsl_code + "color").c_str(), dirLightManager.color_list.at(i));
+                shader->setVec3((gsl_code + "ambient").c_str(), dirLightManager.ambient_list.at(i));
+                shader->setVec3((gsl_code + "diffuse").c_str(), dirLightManager.diffuse_list.at(i));
+                shader->setVec3((gsl_code + "specular").c_str(), dirLightManager.specular_list.at(i));
+                shader->setBool((gsl_code + "isOn").c_str(), dirLightManager.isOn_list.at(i));
+            }
+
+            //Sets point lighting
+            for(int i = 0; i < pointLightManager.total_num; i++){
+                std::string gsl_code = "pointLight[" + std::to_string(i) + "].";
+                shader->setVec3((gsl_code + "position").c_str(), pointLightManager.pos_list.at(i));
+                shader->setVec3((gsl_code + "color").c_str(), pointLightManager.color_list.at(i));
+                shader->setVec3((gsl_code + "ambient").c_str(), pointLightManager.ambient_list.at(i));
+                shader->setVec3((gsl_code + "diffuse").c_str(), pointLightManager.diffuse_list.at(i));
+                shader->setVec3((gsl_code + "specular").c_str(), pointLightManager.specular_list.at(i));
+                shader->setFloat((gsl_code + "constant").c_str(), pointLightManager.constant_list.at(i));
+                shader->setFloat((gsl_code + "linear").c_str(), pointLightManager.linear_list.at(i));
+                shader->setFloat((gsl_code + "quadratic").c_str(), pointLightManager.quadratic_list.at(i));
+                shader->setBool((gsl_code + "isOn").c_str(), dirLightManager.isOn_list.at(i));
+            }
+
+
+            //Sets spot lighting
+            for(int i = 0; i < spotLightManager.total_num; i++){
+                std::string gsl_code = "spotLight[" + std::to_string(i) + "].";
+                shader->setVec3((gsl_code + "position").c_str(), spotLightManager.pos_list.at(i));
+                shader->setVec3((gsl_code + "direction").c_str(), spotLightManager.direction_list.at(i));
+                shader->setFloat((gsl_code + "cutOff").c_str(), spotLightManager.cutOff_list.at(i));
+                shader->setVec3((gsl_code + "color").c_str(), spotLightManager.color_list.at(i));
+                shader->setVec3((gsl_code + "ambient").c_str(), spotLightManager.ambient_list.at(i));
+                shader->setVec3((gsl_code + "diffuse").c_str(), spotLightManager.diffuse_list.at(i));
+                shader->setVec3((gsl_code + "specular").c_str(), spotLightManager.specular_list.at(i));
+                shader->setFloat((gsl_code + "constant").c_str(), spotLightManager.constant_list.at(i));
+                shader->setFloat((gsl_code + "linear").c_str(), spotLightManager.linear_list.at(i));
+                shader->setFloat((gsl_code + "quadratic").c_str(), spotLightManager.quadratic_list.at(i));
+                shader->setBool((gsl_code + "isOn").c_str(), spotLightManager.isOn_list.at(i));
+            }
+
+            //Draws lighting
+            textManager.Draw(textures_list.at(i));
+            textManager.Draw(specular_tex_list.at(i));
+			mesh_list.at(i)->Draw(shader->shaderProgram);
+		}
+	}
+//Adds World Object to lists
+	void Add(VertexManager vert, size_t NumberOfVertices, unsigned int* indices, unsigned int numIndices, std::string textureImage, std::string specImage, glm::vec3 obj_color, glm::vec3 _pos, Logger* logger) {
+		trans_list.push_back(Transform());
+		trans_list.back().pos = _pos;
+		mesh_list.push_back(new Mesh(vert, NumberOfVertices, indices, numIndices, logger));
+		textures_list.push_back(textureImage);
+		object_color_list.push_back(obj_color);
+        specular_tex_list.push_back(specImage);
+		logger->Log("Added Entity to arrays");
+		total_num = trans_list.size();
+	}
+
+	void Update() {
+
+	}
+
+	//Clears world memory from GPU and RAM
+	~TerrainObjectManager() {
+		for (int i = 0; i < total_num; i++) {
+			mesh_list.at(i)->ClearGPUMemory();
+			free(mesh_list.at(i));
+			logger->Log("Freed texture");
+		}
+	}
+};
+
+
+
 #endif
