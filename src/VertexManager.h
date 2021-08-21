@@ -18,6 +18,14 @@ struct VertexManager {
 		normal_list.push_back(normal);
 		total_num = pos_list.size();
 	}
+
+	void Clear(){
+        pos_list.clear();
+        tex_list.clear();
+        indices.clear();
+        normal_list.clear();
+	}
+
 	void Add(glm::vec3 pos, glm::vec2 tex) {
 		pos_list.push_back(pos);
 		tex_list.push_back(tex);

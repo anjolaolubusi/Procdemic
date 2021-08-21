@@ -18,6 +18,7 @@ uniform bool showHeight;
 uniform ivec3[12] grads;
 uniform int[512] perm;
 
+uniform vec2 seed;
 
 vec3 chooseGrad(int index, vec3 pos){
 return (dot(pos, grads[index])/dot(grads[index], grads[index]))*pos;
@@ -85,8 +86,14 @@ n2 = 0.0;
 t2 *= t2;
 n2 = t2 * t2 * (grads[gi2].x * x2 + grads[gi2].y * y2);
 }
-float final_val = 25*(n0+n1+n2);
+float final_val = 50*(n0+n1+n2);
+if(final_val < -1){
+final_val = -1;
+}else if(final_val > 1){
+final_val = 1;
+}else{
 return final_val;
+}
 }
 
 // 2D Random
@@ -140,7 +147,7 @@ float fbm (in vec2 st) {
 
 void main()
 {
-	vec3 newPos = vec3(aPos.x, fbm(aPos.xz * u_scale), aPos.z);
+	vec3 newPos = vec3(aPos.x, fbm((aPos.xz + seed) * u_scale), aPos.z);
 	vec3 newNorm = cross(newPos, aNormal);
 	if(showHeight){
 	gl_Position = camera * transform * vec4(newPos, 1.0);

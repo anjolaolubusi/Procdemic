@@ -20,7 +20,7 @@
 #include "ProcGen.h"
 
 
-#define FPS 60
+#define FPS 120
 Logger logger; //Logs all infomation to console and file
 Window screen(800, 600, "Test", &logger); //Window objecy
 Camera cam; //Camera object
@@ -97,7 +97,7 @@ int main()
 
         procGen.xNum = 255; //Number of squares on the x-axis for our plane
         procGen.zNum = 255; //Number of squares on the y-axis for our plane
-        procGen.AddTriangles(vMan); //Island vertex to vertex Manager
+        procGen.AddTriangles(vMan, glm::vec2(0, 0)); //Island vertex to vertex Manager
         WorldObjectManager WOM(&logger); //Struct containing all the objects that obey the rules of the world
         PointLightManager POM(&logger); //Struct containing all the point light objects
         SpotLightManager SOM(&logger); //Struct containing all the spot light objects
@@ -114,12 +114,37 @@ int main()
         //POM.Add(glm::vec3(0, -1, -6), glm::vec3(1, 1, 1), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.7f, 0.7f, 0.7f), 1.0f, 0.04f, 0.006f);
         DOM.Add(glm::vec3(0, 1, 0), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0.6, 0.6f, 0.6f), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.3f, 0.3f, 0.3f), true); //Adds Directional Light
         Shader currShader("light-test", &logger); //Adds shader for the object
-        //SOM.Add(cam.cameraPos, cam.cameraFront, glm::cos(glm::radians(12.5f)), glm::vec3(1, 1, 1), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 0.7, 1.8f, true); //Add spotlight
+        SOM.Add(cam.cameraPos, cam.cameraFront, glm::cos(glm::radians(12.5f)), glm::vec3(1, 1, 1), glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 0.7, 1.8f, true); //Add spotlight
         Shader basicShader("basic", &logger); //Add basic shader for the light object
 
         WOM.trans_list.back().scale = glm::vec3(2, 1, 2);
-        float u_scale = 0.462f;
+
+        vMan.Clear();
+        procGen.AddTriangles(vMan, glm::vec2(1, 0)); //Island vertex to vertex Manager
+        vMan.SetIncides(); //Sets the incides
+        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "ground-texture.png", "container2_specular.png", glm::vec3(1, 1, 1), glm::vec3(1/procGen.xNum, -1, -6),&logger); //Adds plane object
+        WOM.trans_list.back().scale = glm::vec3(2, 1, 2);
+
+
+        vMan.Clear();
+        procGen.AddTriangles(vMan, glm::vec2(1, 1)); //Island vertex to vertex Manager
+        vMan.SetIncides(); //Sets the incides
+        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "ground-texture.png", "container2_specular.png", glm::vec3(1, 1, 1), glm::vec3(1/procGen.xNum, -1, -6 + 1/procGen.zNum),&logger); //Adds plane object
+        WOM.trans_list.back().scale = glm::vec3(2, 1, 2);
+
+
+        vMan.Clear();
+        procGen.AddTriangles(vMan, glm::vec2(0, 1)); //Island vertex to vertex Manager
+        vMan.SetIncides(); //Sets the incides
+        WOM.Add(vMan, vMan.total_num, vMan.indices.data(), vMan.indices.size(), "ground-texture.png", "container2_specular.png", glm::vec3(1, 1, 1), glm::vec3(0, -1, -6+1/procGen.zNum),&logger); //Adds plane object
+        WOM.trans_list.back().scale = glm::vec3(2, 1, 2);
+
+
+
+        float u_scale = 0.1f;
         bool showHeight = true;
+        glm::vec2 seed = glm::vec2(0.0f, 0.0f);
+        float speed = 0.00f;
 
     const char* glsl_version = "#version 330";
     IMGUI_CHECKVERSION();
@@ -147,11 +172,11 @@ int main()
                     cam.RotateCamera(screen); //Rotates the camera according to the user's movement
                 }
 
-                //SOM.pos_list.back() = cam.cameraPos; //Updates the spotlight postion
-                //SOM.direction_list.back() = cam.cameraFront; //Updates the spotlight's direction
+                SOM.pos_list.back() = cam.cameraPos; //Updates the spotlight postion
+                SOM.direction_list.back() = cam.cameraFront; //Updates the spotlight's direction
 
                 WOM.Update(); //Updates the world's update
-                WOM.Draw(&currShader, cam, textureManager, DOM, POM, SOM, u_scale, showHeight, grad3, perm); //Draws the World Objects to screen
+                WOM.Draw(&currShader, cam, textureManager, DOM, POM, SOM, u_scale, showHeight, grad3, perm, seed); //Draws the World Objects to screen
 
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplGlfw_NewFrame();
@@ -159,6 +184,8 @@ int main()
 
                 ImGui::Begin("Procedual Generation Options");
                 ImGui::SliderFloat("Scale", &u_scale, 0.0f, 1.0f);
+                ImGui::SliderFloat("Speed", &speed, 0.0f, 1.0f);
+                seed.x = glfwGetTime() * speed;
                 ImGui::Checkbox("Show Height", &showHeight);
                 std::string fpsString = "FPS: " + std::to_string(1/deltaTime);
                 ImGui::Text(fpsString.c_str());
